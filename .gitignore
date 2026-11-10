@@ -21,6 +21,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Vercel CLI local project link
+.vercel/
+
 # Test / coverage output
 coverage/
 .nyc_output/
