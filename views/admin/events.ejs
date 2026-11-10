@@ -1,0 +1,51 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">आगामी आणि झालेले साहित्यिक कार्यक्रम.</p>
+  <a class="btn btn-primary" href="/admin/events/new">+ नवीन कार्यक्रम</a>
+</div>
+
+<div class="panel">
+  <% if (events.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>कार्यक्रम</th><th>स्थळ</th><th>प्रारंभ</th><th>स्थिती</th><th>क्रिया</th></tr></thead>
+        <tbody>
+          <% events.forEach(function (event) { %>
+            <tr>
+              <td>
+                <strong><%= event.title %></strong>
+                <% if (event.description_mr) { %><div class="small muted"><%= helpers.truncate(event.description_mr, 70) %></div><% } %>
+              </td>
+              <td class="small"><%= event.venue || '—' %></td>
+              <td class="small"><%= event.starts_at ? helpers.formatDateMr(event.starts_at) : '—' %></td>
+              <td>
+                <span class="badge <%= event.status === 'upcoming' ? 'badge-ahr' : event.status === 'cancelled' ? 'badge-news' : '' %>">
+                  <%= event.status === 'upcoming' ? 'आगामी' : event.status === 'cancelled' ? 'रद्द' : 'पार पडला' %>
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <a class="btn btn-ghost btn-sm" href="/admin/events/<%= event.id %>/edit">संपादन</a>
+                  <form action="/admin/events/<%= event.id %>/delete" method="post" class="inline-form" data-confirm="हा कार्यक्रम हटवायचा आहे का?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">🗓️</div>
+      <h3>अजून कार्यक्रम नाहीत</h3>
+      <p>संमेलने, कवीसंमेलने आणि मुशायऱ्यांची माहिती येथे जोडा.</p>
+      <a class="btn btn-primary" href="/admin/events/new">नवीन कार्यक्रम जोडा</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

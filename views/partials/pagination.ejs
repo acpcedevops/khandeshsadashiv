@@ -1,0 +1,13 @@
+<% if (pagination && pagination.pages > 1) { %>
+  <nav class="pagination" aria-label="पृष्ठ नेव्हिगेशन">
+    <% pagination.links.forEach(function (item) { %>
+      <% if (item.ellipsis) { %>
+        <span class="disabled">…</span>
+      <% } else if (item.current) { %>
+        <span class="current" aria-current="page"><%= item.label %></span>
+      <% } else { %>
+        <a href="<%= item.href %>"><%= item.label %></a>
+      <% } %>
+    <% }) %>
+  </nav>
+<% } %>

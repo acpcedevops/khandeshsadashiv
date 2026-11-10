@@ -1,0 +1,67 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="mb-2">
+  <a class="btn btn-ghost btn-sm" href="/admin/gallery">← सर्व दालने</a>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <div>
+      <h2><%= album.title_mr %></h2>
+      <% if (album.description_mr) { %><p class="small muted" style="margin:0;"><%= album.description_mr %></p><% } %>
+    </div>
+    <form action="/admin/gallery/<%= album.id %>/delete" method="post" data-confirm="हे दालन आणि त्यातील सर्व छायाचित्रे हटवायची आहेत का?">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="btn btn-danger btn-sm" type="submit">दालन हटवा</button>
+    </form>
+  </div>
+  <div class="panel-body">
+    <form action="/admin/gallery/<%= album.id %>/photos" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <div class="field">
+          <label for="album-photos">छायाचित्रे निवडा</label>
+          <input class="input" id="album-photos" type="file" name="photos" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple required>
+          <p class="hint">एका वेळी जास्तीत जास्त १२ छायाचित्रे · कमाल <%= uploadLimitMb %> MB प्रत्येकी</p>
+        </div>
+        <div class="field">
+          <label for="album-caption">सामायिक कॅप्शन (पर्यायी)</label>
+          <input class="input" id="album-caption" type="text" name="caption_mr" maxlength="200">
+          <label class="mt-1" for="album-sort" style="display:block;font-size:0.88rem;font-weight:700;margin-bottom:0.35rem;">प्रारंभिक क्रम</label>
+          <input class="input" id="album-sort" type="number" name="sort_order" value="0" min="0" max="999">
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">छायाचित्रे अपलोड करा</button>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>छायाचित्रे</h2><span class="small muted"><%= helpers.toMarathiDigits(photos.length) %> एकूण</span></div>
+  <% if (photos.length) { %>
+    <div class="panel-body">
+      <div class="grid grid-4">
+        <% photos.forEach(function (photo) { %>
+          <figure class="card" style="margin:0;">
+            <img src="<%= photo.url %>" alt="<%= photo.alt_mr || album.title_mr %>" loading="lazy" style="aspect-ratio:4/3;object-fit:cover;width:100%;">
+            <figcaption class="card-body" style="padding:0.55rem 0.65rem;">
+              <div class="small muted mb-1"><%= photo.caption_mr || 'कॅप्शन नाही' %></div>
+              <form action="/admin/gallery/<%= album.id %>/photos/<%= photo.id %>/delete" method="post" data-confirm="हे छायाचित्र हटवायचे आहे का?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+              </form>
+            </figcaption>
+          </figure>
+        <% }) %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">🖼️</div>
+      <h3>या दालनात छायाचित्रे नाहीत</h3>
+      <p>वरील फॉर्मने छायाचित्रे अपलोड करा.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

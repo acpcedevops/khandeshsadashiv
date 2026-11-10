@@ -1,0 +1,40 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">शोध</span>
+    <h1><%= q ? 'शोध: ' + q : 'शोध' %></h1>
+    <form action="/search" method="get" class="filter-bar" style="margin-top:1rem;">
+      <input class="input search-input" type="search" name="q" value="<%= q %>" placeholder="लेख, कविता, बातमी शोधा…" aria-label="शोध शब्द">
+      <button class="btn btn-primary" type="submit">शोधा</button>
+    </form>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <% if (!q) { %>
+      <div class="empty">
+        <div class="empty-icon">🔎</div>
+        <h3>काय शोधायचे आहे?</h3>
+        <p>लेखाचे शीर्षक, कवितेची ओळ किंवा बातमीतील शब्द टाका.</p>
+      </div>
+    <% } else if (posts.length) { %>
+      <p class="muted"><%= helpers.toMarathiDigits(pagination.total) %> निकाल सापडले.</p>
+      <div class="grid grid-2">
+        <% posts.forEach(function (post) { %>
+          <%- include('../partials/post-card', { post: post }) %>
+        <% }) %>
+      </div>
+      <%- include('../partials/pagination') %>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty-icon">😕</div>
+        <h3>"<%= q %>" साठी काही सापडले नाही</h3>
+        <p>वेगळा शब्द वापरून पहा किंवा <a href="/writings">सर्व साहित्य</a> पहा.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

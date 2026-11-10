@@ -1,0 +1,153 @@
+<%- include('../partials/public-header') %>
+
+<% if (isPreview) { %>
+<div class="container mt-2">
+  <div class="alert alert-warning">
+    <span>⚠️ हा लेख अजून प्रकाशित झालेला नाही. हे पूर्वावलोकन फक्त तुम्हाला दिसत आहे.</span>
+  </div>
+</div>
+<% } %>
+
+<article>
+  <header class="article-header">
+    <div class="reading">
+      <div class="meta mb-1">
+        <span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span>
+        <% if (post.language === 'ahr') { %><span class="badge badge-ahr">अहिराणी</span><% } %>
+        <% if (post.category_name) { %><span class="badge"><%= post.category_name %></span><% } %>
+        <span class="badge <%= helpers.statusBadgeClass(post.status) %>"><%= helpers.statusLabel(post.status) %></span>
+      </div>
+      <h1><%= post.title %></h1>
+      <% if (post.excerpt) { %><p class="lead"><%= post.excerpt %></p><% } %>
+      <div class="meta">
+        <span class="avatar" style="width:30px;height:30px;font-size:0.75rem;">
+          <% if (post.author_avatar) { %><img src="<%= post.author_avatar %>" alt=""><% } else { %><%= helpers.initials(post.author_name) %><% } %>
+        </span>
+        <span><%= post.author_pen_name || post.author_name %></span>
+        <span class="dot"></span>
+        <time datetime="<%= post.published_at || '' %>"><%= helpers.formatDateMr(post.published_at) %></time>
+        <span class="dot"></span>
+        <span><%= helpers.readingTimeLabel(post.reading_time) %></span>
+        <span class="dot"></span>
+        <span><%= helpers.viewCountLabel(post.view_count) %></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="reading">
+    <% if (post.cover_url) { %>
+      <figure class="article-cover">
+        <img src="<%= post.cover_url %>" alt="<%= post.cover_alt || post.title %>">
+      </figure>
+    <% } %>
+
+    <div class="prose <%= post.type === 'poem' ? 'poem-text' : '' %>">
+      <%- post.body_html %>
+    </div>
+
+    <% if (tags && tags.length) { %>
+      <div class="flex gap-1 mt-3" style="flex-wrap:wrap;">
+        <% tags.forEach(function (tag) { %>
+          <a class="chip" href="/search?q=<%= encodeURIComponent(tag) %>"># <%= tag %></a>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (post.source_url) { %>
+      <p class="small muted mt-2">
+        स्रोत: <a href="<%= post.source_url %>" target="_blank" rel="noopener"><%= post.source_name || 'मूळ बातमी' %></a>
+      </p>
+    <% } %>
+
+    <div class="share">
+      <span>शेअर करा:</span>
+      <a class="btn btn-ghost btn-sm" href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' ' + siteUrl + currentUrl) %>" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(siteUrl + currentUrl) %>" target="_blank" rel="noopener">Facebook</a>
+      <a class="btn btn-ghost btn-sm" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(post.title) %>&url=<%= encodeURIComponent(siteUrl + currentUrl) %>" target="_blank" rel="noopener">X</a>
+      <button class="btn btn-ghost btn-sm" type="button" data-copy="<%= siteUrl + currentUrl %>">दुवा कॉपी</button>
+      <button class="btn btn-ghost btn-sm" type="button" onclick="window.print()">प्रिंट</button>
+    </div>
+
+    <% if (prev || next) { %>
+      <nav class="article-nav" aria-label="मागील आणि पुढील लेख">
+        <% if (prev) { %>
+          <a href="<%= prev.type === 'news' ? '/news/' : '/writings/' %><%= prev.slug %>">
+            <small>← मागील</small>
+            <%= prev.title %>
+          </a>
+        <% } else { %><span></span><% } %>
+        <% if (next) { %>
+          <a href="<%= next.type === 'news' ? '/news/' : '/writings/' %><%= next.slug %>" style="text-align:right;">
+            <small>पुढील →</small>
+            <%= next.title %>
+          </a>
+        <% } %>
+      </nav>
+    <% } %>
+
+    <% if (related && related.length) { %>
+      <section class="section-tight">
+        <div class="section-head"><h2 style="font-size:1.4rem;">हे सुद्धा वाचा</h2></div>
+        <div class="grid grid-3">
+          <% related.forEach(function (item) { %>
+            <%- include('../partials/post-card', { post: item }) %>
+          <% }) %>
+        </div>
+      </section>
+    <% } %>
+
+    <section id="comments" class="section-tight">
+      <div class="section-head">
+        <h2 style="font-size:1.4rem;">टिप्पण्या</h2>
+        <span class="small muted"><%= helpers.toMarathiDigits(comments.length) %> मंजूर</span>
+      </div>
+
+      <% if (comments.length) { %>
+        <div class="grid" style="gap:0.8rem;">
+          <% comments.forEach(function (comment) { %>
+            <div class="panel" style="margin:0;">
+              <div class="panel-body">
+                <div class="meta mb-1">
+                  <strong><%= comment.author_name %></strong>
+                  <span class="dot"></span>
+                  <span><%= helpers.formatDateMr(comment.created_at) %></span>
+                </div>
+                <p style="margin:0;white-space:pre-wrap;"><%= comment.body %></p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">अजून टिप्पणी नाही. पहिली टिप्पणी तुम्ही करा.</p>
+      <% } %>
+
+      <% if (settings['features.comments'] === '1') { %>
+        <form action="/comments" method="post" class="form-card mt-2">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="post_id" value="<%= post.id %>">
+          <h3 style="font-size:1.15rem;">तुमची प्रतिक्रिया</h3>
+          <p class="hint">टिप्पण्या मंजुरीनंतर प्रकाशित होतात.</p>
+          <div class="form-row">
+            <div class="field">
+              <label for="comment-name">नाव *</label>
+              <input class="input" id="comment-name" type="text" name="author_name" value="<%= currentUser ? currentUser.name : '' %>" required maxlength="80">
+            </div>
+            <div class="field">
+              <label for="comment-email">ईमेल (प्रकाशित होणार नाही)</label>
+              <input class="input" id="comment-email" type="email" name="author_email" value="<%= currentUser ? currentUser.email : '' %>" maxlength="120">
+            </div>
+          </div>
+          <div class="field">
+            <label for="comment-body">टिप्पणी *</label>
+            <textarea class="textarea" id="comment-body" name="body" required maxlength="2000" style="min-height:110px;"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">टिप्पणी पाठवा</button>
+        </form>
+      <% } %>
+    </section>
+
+    <p class="mt-3"><a class="btn btn-ghost" href="<%= backPath %>">← <%= backLabel %></a></p>
+  </div>
+</article>
+
+<%- include('../partials/public-footer') %>

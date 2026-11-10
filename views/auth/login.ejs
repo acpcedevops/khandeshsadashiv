@@ -1,0 +1,31 @@
+<%- include('../partials/public-header') %>
+
+<section class="auth-wrap">
+  <div class="auth-card form-card">
+    <h1>प्रवेश</h1>
+    <p class="sub">तुमच्या लेखक खात्यात प्रवेश करा.</p>
+
+    <% if (errors.form) { %><div class="alert alert-error"><span><%= errors.form %></span></div><% } %>
+
+    <form action="/login" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="field">
+        <label for="login-email">ईमेल</label>
+        <input class="input" id="login-email" type="email" name="email" value="<%= form.email || '' %>" required autocomplete="email" autofocus>
+      </div>
+      <div class="field">
+        <label for="login-password">पासवर्ड</label>
+        <input class="input" id="login-password" type="password" name="password" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">प्रवेश करा</button>
+    </form>
+
+    <p class="auth-footer">
+      <a href="/forgot-password">पासवर्ड विसरला?</a> ·
+      खाते नाही? <a href="/register">लेखक म्हणून नोंदणी करा</a>
+    </p>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

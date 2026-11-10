@@ -1,0 +1,58 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">वृत्तपत्रे, वेबसाइट आणि माध्यमांमधील उल्लेख.</p>
+  <a class="btn btn-primary" href="/admin/media/new">+ नवीन उल्लेख</a>
+</div>
+
+<div class="panel">
+  <% if (media.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>शीर्षक</th><th>वृत्तपत्र / वेबसाइट</th><th>दिनांक</th><th>क्रम</th><th>क्रिया</th></tr>
+        </thead>
+        <tbody>
+          <% media.forEach(function (item) { %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-1">
+                  <% if (item.image_url) { %>
+                    <img src="<%= item.image_url %>" alt="" style="width:52px;height:38px;object-fit:cover;border-radius:6px;border:1px solid var(--line);">
+                  <% } %>
+                  <div>
+                    <strong><%= item.title_mr %></strong>
+                    <% if (item.url) { %>
+                      <div class="small"><a href="<%= item.url %>" target="_blank" rel="noopener">दुवा उघडा →</a></div>
+                    <% } %>
+                  </div>
+                </div>
+              </td>
+              <td class="small"><%= item.publication || '—' %></td>
+              <td class="small muted"><%= item.published_on ? helpers.formatDateMr(item.published_on) : '—' %></td>
+              <td class="small"><%= helpers.toMarathiDigits(item.sort_order) %></td>
+              <td>
+                <div class="actions">
+                  <a class="btn btn-ghost btn-sm" href="/admin/media/<%= item.id %>/edit">संपादन</a>
+                  <form action="/admin/media/<%= item.id %>/delete" method="post" class="inline-form" data-confirm="हा उल्लेख हटवायचा आहे का?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📰</div>
+      <h3>अजून उल्लेख नाहीत</h3>
+      <p>वृत्तपत्रांतील बातम्या आणि मुलाखती येथे जोडा.</p>
+      <a class="btn btn-primary" href="/admin/media/new">नवीन उल्लेख जोडा</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

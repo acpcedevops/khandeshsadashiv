@@ -1,0 +1,22 @@
+<% if (timeline && timeline.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">कालरेषा</span>
+        <h2>साहित्यिक प्रवासातील टप्पे</h2>
+      </div>
+      <a class="section-link" href="/news">सर्व बातम्या</a>
+    </div>
+    <ol class="timeline">
+      <% timeline.forEach(function (post) { %>
+        <li class="timeline-item">
+          <time datetime="<%= post.published_at %>"><%= helpers.formatDateMr(post.published_at) %></time>
+          <h3><a href="/news/<%= post.slug %>"><%= post.title %></a></h3>
+          <p><%= helpers.truncate(post.excerpt || '', 130) %></p>
+        </li>
+      <% }) %>
+    </ol>
+  </div>
+</section>
+<% } %>

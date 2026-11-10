@@ -1,0 +1,27 @@
+<% if (events && events.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">कार्यक्रम</span>
+        <h2>आगामी उपक्रम</h2>
+      </div>
+      <a class="section-link" href="/events">सर्व कार्यक्रम</a>
+    </div>
+    <div class="grid grid-3">
+      <% events.forEach(function (event) { %>
+        <article class="card">
+          <div class="card-body">
+            <div class="meta mb-1">
+              <span class="badge">📅 <%= helpers.formatDateMr(event.starts_at) %></span>
+            </div>
+            <h3><%= event.title %></h3>
+            <% if (event.venue) { %><p class="meta">📍 <%= event.venue %></p><% } %>
+            <% if (event.description_mr) { %><p class="card-excerpt"><%= helpers.truncate(event.description_mr, 120) %></p><% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>

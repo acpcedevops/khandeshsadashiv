@@ -1,0 +1,30 @@
+<% if (books && books.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">पुस्तके</span>
+        <h2>प्रकाशित साहित्य</h2>
+      </div>
+      <a class="section-link" href="/books">सर्व पुस्तके</a>
+    </div>
+    <div class="grid grid-4">
+      <% books.forEach(function (book) { %>
+        <article class="card">
+          <div class="card-cover">
+            <% if (book.cover_url) { %>
+              <img src="<%= book.cover_url %>" alt="<%= book.title %>" loading="lazy">
+            <% } else { %>
+              <span class="cover-placeholder"><%= helpers.firstChar(book.title) %></span>
+            <% } %>
+          </div>
+          <div class="card-body">
+            <h3><%= book.title %></h3>
+            <p class="meta"><%= book.publisher || '' %><% if (book.year) { %><span class="dot"></span><%= book.year %><% } %></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>

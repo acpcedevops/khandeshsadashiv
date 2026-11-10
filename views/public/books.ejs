@@ -1,0 +1,57 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">पुस्तके</span>
+    <h1>प्रकाशित साहित्य</h1>
+    <p class="muted" style="max-width:65ch;">डॉ. सदाशिव सुर्यवंशी यांची पुस्तके आणि प्रकाशने. खरेदी दुवे उपलब्ध असल्यास दिले आहेत.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <% if (books.length) { %>
+      <div class="grid grid-3">
+        <% books.forEach(function (book) { %>
+          <article class="card">
+            <div class="card-cover">
+              <% if (book.cover_url) { %>
+                <img src="<%= book.cover_url %>" alt="<%= book.title %>" loading="lazy">
+              <% } else { %>
+                <span class="cover-placeholder"><%= helpers.firstChar(book.title) %></span>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <h3><%= book.title %></h3>
+              <% if (book.description_mr) { %><p class="card-excerpt"><%= book.description_mr %></p><% } %>
+              <div class="meta mb-1">
+                <% if (book.publisher) { %><span><%= book.publisher %></span><% } %>
+                <% if (book.year) { %><span class="dot"></span><span><%= book.year %></span><% } %>
+                <% if (book.isbn) { %><span class="dot"></span><span>ISBN: <%= book.isbn %></span><% } %>
+              </div>
+              <%
+                const links = helpers.safeJsonParse(book.buy_links_json, {});
+                const entries = links && typeof links === 'object' ? Object.entries(links) : [];
+              %>
+              <% if (entries.length) { %>
+                <div class="flex gap-1" style="flex-wrap:wrap;">
+                  <% entries.forEach(function (entry) { %>
+                    <a class="btn btn-gold btn-sm" href="<%= entry[1] %>" target="_blank" rel="noopener"><%= entry[0] %></a>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty-icon">📚</div>
+        <h3>पुस्तकांची माहिती लवकरच</h3>
+        <p>पुस्तकांची यादी भरली जात आहे.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

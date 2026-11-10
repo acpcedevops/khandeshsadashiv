@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> — <%= settings['site.name'] %></title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<%
+  const area = typeof areaName !== 'undefined' ? areaName : 'dashboard';
+  const staff = ['owner', 'admin', 'editor'].includes(currentUser.role);
+  const navItems = area === 'admin'
+    ? [
+        { section: 'आढावा' },
+        { href: '/admin', label: 'डॅशबोर्ड', icon: '📊' },
+        { href: '/admin/posts', label: 'लेख व्यवस्थापन', icon: '✍️' },
+        { href: '/admin/posts/new', label: 'नवीन लेख / बातमी', icon: '➕' },
+        { href: '/admin/comments', label: 'टिप्पण्या', icon: '💬' },
+        { href: '/admin/users', label: 'वापरकर्ते', icon: '👥' },
+        { section: 'साहित्य' },
+        { href: '/admin/books', label: 'पुस्तके', icon: '📚' },
+        { href: '/admin/events', label: 'कार्यक्रम', icon: '🗓️' },
+        { href: '/admin/gallery', label: 'छायाचित्र दालन', icon: '🖼️' },
+        { href: '/admin/media', label: 'वृत्तपत्र उल्लेख', icon: '📰' },
+        { section: 'संवाद' },
+        { href: '/admin/messages', label: 'संपर्क संदेश', icon: '✉️' },
+        { href: '/admin/subscribers', label: 'वृत्तपत्र ग्राहक', icon: '📧' },
+        { section: 'प्रणाली' },
+        { href: '/admin/settings', label: 'साइट सेटिंग्ज', icon: '⚙️' },
+        { href: '/admin/audit', label: 'ऑडिट लॉग', icon: '📋' },
+        { href: '/', label: 'सार्वजनिक साइट', icon: '↗' },
+        { href: '/dashboard', label: 'लेखक डॅशबोर्ड', icon: '↗' },
+      ]
+    : [
+        { section: 'लेखन' },
+        { href: '/dashboard', label: 'मुख्यपृष्ठ', icon: '🏠' },
+        { href: '/dashboard/posts', label: 'माझे लेख', icon: '📝' },
+        { href: '/dashboard/posts/new', label: 'नवीन लेख', icon: '✍️' },
+        { section: 'खाते' },
+        { href: '/dashboard/profile', label: 'माझी माहिती', icon: '👤' },
+        { href: '/dashboard/notifications', label: 'सूचना', icon: '🔔' },
+        { section: 'इतर' },
+        { href: '/', label: 'सार्वजनिक साइट', icon: '↗' },
+        ...(staff ? [{ href: '/admin', label: 'प्रशासन', icon: '⚙️' }] : []),
+      ];
+%>
+<div class="dash">
+  <aside class="dash-sidebar">
+    <a class="brand" href="/">
+      <span class="brand-mark">सु</span>
+      <span class="brand-text">
+        <span class="brand-name"><%= settings['site.name'] %></span>
+        <span class="brand-sub"><%= area === 'admin' ? 'प्रशासन' : 'व्यवस्थापन' %></span>
+      </span>
+    </a>
+    <nav class="dash-nav" aria-label="डॅशबोर्ड मेनू">
+      <% navItems.forEach(function (item) { %>
+        <% if (item.section) { %>
+          <div class="nav-section"><%= item.section %></div>
+        <% } else { %>
+          <a href="<%= item.href %>" class="<%= currentPath === item.href ? 'active' : '' %>">
+            <span aria-hidden="true"><%= item.icon || '•' %></span><%= item.label %>
+          </a>
+        <% } %>
+      <% }) %>
+    </nav>
+  </aside>
+
+  <div class="dash-main">
+    <div class="dash-top">
+      <h1><%= pageTitle %></h1>
+      <div class="dash-user">
+        <span class="avatar">
+          <% if (currentUser.avatar_url) { %><img src="<%= currentUser.avatar_url %>" alt=""><% } else { %><%= helpers.initials(currentUser.name) %><% } %>
+        </span>
+        <span>
+          <%= currentUser.name %><br>
+          <small><%= helpers.roleLabel(currentUser.role) %><% if (currentUser.status === 'pending') { %> · मंजुरी प्रतीक्षेत<% } %></small>
+        </span>
+        <form action="/logout" method="post" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-ghost btn-sm" type="submit">बाहेर</button>
+        </form>
+      </div>
+    </div>
+
+    <%- include('flash') %>

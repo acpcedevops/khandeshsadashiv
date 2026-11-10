@@ -1,0 +1,10 @@
+<% if (flash && flash.length) { %>
+  <div class="container">
+    <% flash.forEach(function (item) { %>
+      <div class="alert alert-<%= item.type || 'info' %>" role="alert">
+        <span><%= item.message %></span>
+        <button class="alert-close" type="button" data-dismiss aria-label="बंद करा">&times;</button>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

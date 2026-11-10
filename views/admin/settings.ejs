@@ -1,0 +1,186 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="grid grid-2" style="grid-template-columns:1.35fr 1fr;align-items:start;">
+  <div>
+    <form action="/admin/settings" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="panel">
+        <div class="panel-head"><h2>साइट ओळख</h2></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field">
+              <label for="set-name">साइटचे नाव (मराठी) *</label>
+              <input class="input" id="set-name" type="text" name="site_name" value="<%= settings['site.name'] || '' %>" required maxlength="120">
+            </div>
+            <div class="field">
+              <label for="set-name-en">साइटचे नाव (इंग्रजी)</label>
+              <input class="input" id="set-name-en" type="text" name="site_name_en" value="<%= settings['site.name_en'] || '' %>" maxlength="120">
+            </div>
+          </div>
+          <div class="field">
+            <label for="set-tagline">टॅगलाइन</label>
+            <input class="input" id="set-tagline" type="text" name="site_tagline" value="<%= settings['site.tagline'] || '' %>" maxlength="200">
+          </div>
+          <div class="field">
+            <label for="set-description">साइट वर्णन (SEO)</label>
+            <textarea class="textarea" id="set-description" name="site_description" maxlength="400" style="min-height:90px;"><%= settings['site.description'] || '' %></textarea>
+            <p class="hint">हे वर्णन शोध इंजिन आणि सोशल शेअरमध्ये वापरले जाते.</p>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="set-owner">मालकाचे नाव (मराठी)</label>
+              <input class="input" id="set-owner" type="text" name="site_owner_name" value="<%= settings['site.owner_name'] || '' %>" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="set-owner-en">मालकाचे नाव (इंग्रजी)</label>
+              <input class="input" id="set-owner-en" type="text" name="site_owner_name_en" value="<%= settings['site.owner_name_en'] || '' %>" maxlength="120">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>संपर्क माहिती</h2></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field">
+              <label for="set-email">ईमेल</label>
+              <input class="input" id="set-email" type="email" name="site_contact_email" value="<%= settings['site.contact_email'] || '' %>" maxlength="160">
+            </div>
+            <div class="field">
+              <label for="set-phone">दूरध्वनी</label>
+              <input class="input" id="set-phone" type="text" name="site_contact_phone" value="<%= settings['site.contact_phone'] || '' %>" maxlength="40">
+            </div>
+          </div>
+          <div class="field">
+            <label for="set-address">पत्ता</label>
+            <textarea class="textarea" id="set-address" name="site_address" maxlength="300" style="min-height:80px;"><%= settings['site.address'] || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>सोशल मीडिया दुवे</h2></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="field">
+              <label for="set-facebook">Facebook</label>
+              <input class="input" id="set-facebook" type="url" name="site_facebook" value="<%= settings['site.facebook'] || '' %>" maxlength="300" placeholder="https://facebook.com/...">
+            </div>
+            <div class="field">
+              <label for="set-youtube">YouTube</label>
+              <input class="input" id="set-youtube" type="url" name="site_youtube" value="<%= settings['site.youtube'] || '' %>" maxlength="300" placeholder="https://youtube.com/...">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="set-instagram">Instagram</label>
+              <input class="input" id="set-instagram" type="url" name="site_instagram" value="<%= settings['site.instagram'] || '' %>" maxlength="300">
+            </div>
+            <div class="field">
+              <label for="set-x">X (Twitter)</label>
+              <input class="input" id="set-x" type="url" name="site_x" value="<%= settings['site.x'] || '' %>" maxlength="300">
+            </div>
+          </div>
+          <div class="field">
+            <label for="set-whatsapp">WhatsApp</label>
+            <input class="input" id="set-whatsapp" type="text" name="site_whatsapp" value="<%= settings['site.whatsapp'] || '' %>" maxlength="60">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>मुख्यपृष्ठ आणि वैशिष्ट्ये</h2></div>
+        <div class="panel-body">
+          <div class="field">
+            <label for="set-quote">मुख्यपृष्ठावरील उद्धरण</label>
+            <input class="input" id="set-quote" type="text" name="home_quote" value="<%= settings['home.quote'] || '' %>" maxlength="200">
+          </div>
+
+          <fieldset style="border:1px solid var(--line);border-radius:10px;padding:0.85rem 1rem;margin:0 0 1rem;">
+            <legend class="small" style="font-weight:700;padding:0 0.4rem;">सक्रिय विभाग</legend>
+            <label class="checkbox mb-1"><input type="checkbox" name="features_comments" value="1" <%= settings['features.comments'] === '1' ? 'checked' : '' %>> टिप्पण्या सक्षम करा</label>
+            <label class="checkbox mb-1"><input type="checkbox" name="features_newsletter" value="1" <%= settings['features.newsletter'] === '1' ? 'checked' : '' %>> वृत्तपत्र नोंदणी सक्षम करा</label>
+            <label class="checkbox mb-1"><input type="checkbox" name="features_gallery" value="1" <%= settings['features.gallery'] === '1' ? 'checked' : '' %>> छायाचित्र दालन सक्षम करा</label>
+            <label class="checkbox mb-1"><input type="checkbox" name="features_events" value="1" <%= settings['features.events'] === '1' ? 'checked' : '' %>> कार्यक्रम सक्षम करा</label>
+          </fieldset>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="set-limit-title">शीर्षक मर्यादा (अक्षरे)</label>
+              <input class="input" id="set-limit-title" type="number" name="limits_title" value="<%= settings['limits.title'] || 90 %>" min="20" max="200">
+            </div>
+            <div class="field">
+              <label for="set-limit-excerpt">सारांश मर्यादा (अक्षरे)</label>
+              <input class="input" id="set-limit-excerpt" type="number" name="limits_excerpt" value="<%= settings['limits.excerpt'] || 220 %>" min="40" max="600">
+            </div>
+          </div>
+          <div class="field" style="max-width:260px;">
+            <label for="set-limit-body">मजकूर मर्यादा (अक्षरे)</label>
+            <input class="input" id="set-limit-body" type="number" name="limits_body" value="<%= settings['limits.body'] || 12000 %>" min="500" max="60000">
+          </div>
+
+          <button class="btn btn-primary" type="submit">सेटिंग्ज जतन करा</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>मुख्यपृष्ठ विभाग क्रम</h2>
+        <span class="small muted">वरचे खाली</span>
+      </div>
+      <div class="panel-body">
+        <p class="small muted" style="margin-top:0;">बाणांनी विभागांचा क्रम बदला. बदल त्वरित लागू होतात.</p>
+        <div class="grid" style="gap:0.55rem;">
+          <% sections.forEach(function (section, index) { %>
+            <div class="flex justify-between items-center gap-1" style="padding:0.6rem 0.7rem;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);">
+              <div class="flex items-center gap-1">
+                <span class="badge"><%= helpers.toMarathiDigits(index + 1) %></span>
+                <strong class="small"><%= sectionLabels[section] || section %></strong>
+              </div>
+              <div class="actions">
+                <form action="/admin/settings/section-move" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="section" value="<%= section %>">
+                  <input type="hidden" name="direction" value="up">
+                  <button class="btn btn-ghost btn-sm" type="submit" <%= index === 0 ? 'disabled' : '' %> aria-label="वर हलवा">↑</button>
+                </form>
+                <form action="/admin/settings/section-move" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="section" value="<%= section %>">
+                  <input type="hidden" name="direction" value="down">
+                  <button class="btn btn-ghost btn-sm" type="submit" <%= index === sections.length - 1 ? 'disabled' : '' %> aria-label="खाली हलवा">↓</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+        <% const hiddenSections = homeSections.filter(function (name) { return !sections.includes(name); }); %>
+        <% if (hiddenSections.length) { %>
+          <hr>
+          <p class="small muted" style="margin-bottom:0.5rem;">सध्या मुख्यपृष्ठावर न दाखवले जाणारे विभाग:</p>
+          <div class="flex gap-1" style="flex-wrap:wrap;">
+            <% hiddenSections.forEach(function (name) { %>
+              <span class="chip"><%= sectionLabels[name] || name %></span>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>सुरक्षा सूचना</h2></div>
+      <div class="panel-body small muted">
+        <p style="margin-top:0;">साइटचे नाव किंवा संपर्क बदलल्यास सार्वजनिक पानांवर त्वरित अद्ययावत होईल.</p>
+        <p>ईमेल पाठवण्यासाठी <code>RESEND_API_KEY</code> आणि चित्रांसाठी <code>SUPABASE_*</code> पर्यावरण चल सेट करा.</p>
+        <p style="margin-bottom:0;">उत्पादनात डिफॉल्ट पासवर्ड लगेच बदला.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

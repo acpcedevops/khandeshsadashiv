@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="गझल मुशायरा — नमुना छायाचित्र">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f1b16"/>
+      <stop offset="0.55" stop-color="#5c1414"/>
+      <stop offset="1" stop-color="#9c2b2b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.7" cy="0.25" r="0.5">
+      <stop offset="0" stop-color="#c8a24a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#c8a24a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <rect width="1200" height="900" fill="url(#glow)"/>
+  <g fill="#efe3c2" opacity="0.85">
+    <circle cx="980" cy="180" r="3"/>
+    <circle cx="1060" cy="240" r="2"/>
+    <circle cx="900" cy="260" r="2"/>
+    <circle cx="1120" cy="150" r="2"/>
+    <circle cx="840" cy="180" r="2"/>
+  </g>
+  <text x="120" y="330" font-family="'Tiro Devanagari Marathi','Noto Sans Devanagari',serif" font-size="92" fill="#fbf7ef">गझल</text>
+  <text x="120" y="450" font-family="'Tiro Devanagari Marathi','Noto Sans Devanagari',serif" font-size="92" fill="#fbf7ef">मुशायरा</text>
+  <text x="124" y="560" font-family="'Mukta','Noto Sans Devanagari',sans-serif" font-size="34" fill="#efe3c2">शेर-ओ-शायरीची संध्या · नमुना छायाचित्र</text>
+  <g transform="translate(120,650)" fill="none" stroke="#c8a24a" stroke-width="3">
+    <path d="M0 0h180M0 24h120M0 48h150"/>
+  </g>
+</svg>

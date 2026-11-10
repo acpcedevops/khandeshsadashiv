@@ -1,0 +1,57 @@
+<%- include('../partials/shell-header', { areaName: 'dashboard' }) %>
+
+<div class="flex justify-between items-center gap-2 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">तुमच्या लेखांवरील स्थिती बदल आणि प्रशासकीय सूचना येथे दिसतात.</p>
+  <form action="/dashboard/notifications/read" method="post" class="inline-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="btn btn-ghost btn-sm" type="submit">सर्व वाचले म्हणून चिन्हांकित करा</button>
+  </form>
+</div>
+
+<div class="panel">
+  <% if (notifications.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>सूचना</th>
+            <th>दिनांक</th>
+            <th>स्थिती</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% notifications.forEach(function (note) { %>
+            <tr style="<%= note.read_at ? '' : 'background:var(--surface-2);' %>">
+              <td>
+                <strong><%= note.title_mr %></strong>
+                <% if (note.body_mr) { %><div class="small muted"><%= note.body_mr %></div><% } %>
+              </td>
+              <td class="small muted"><%= helpers.timeAgoMr(note.created_at) %></td>
+              <td>
+                <% if (note.read_at) { %>
+                  <span class="badge">वाचले</span>
+                <% } else { %>
+                  <span class="badge badge-news">नवीन</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (note.link) { %>
+                  <a class="btn btn-ghost btn-sm" href="<%= note.link %>">उघडा</a>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">🔔</div>
+      <h3>अजून सूचना नाहीत</h3>
+      <p>तुमचे लेख मंजूर झाल्यावर किंवा बदल आवश्यक असल्यास येथे सूचना दिसतील.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

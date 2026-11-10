@@ -1,0 +1,134 @@
+<%- include('../partials/public-header') %>
+
+<section class="section">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-kicker">परिचय</span>
+      <h1>प्रा. डॉ. सदाशिव श्रीराम सुर्यवंशी</h1>
+      <p class="hero-name-en">Prof. Dr. Sadashiv Shriram Suryawanshi · धुळे</p>
+      <p class="hero-sub">
+        मराठी लेखक, गझलकार, अहिराणी भाषा-चळवळीतील कार्यकर्ते आणि खान्देश साहित्य संघाचे राष्ट्रीय अध्यक्ष.
+        खान्देशातील मराठी, अहिराणी आणि इतर बोलीभाषांतील साहित्यिकांना व्यासपीठ उपलब्ध करून देण्यासाठी
+        त्यांचे सातत्याने कार्य सुरू आहे.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/writings">साहित्य वाचा</a>
+        <a class="btn btn-ghost" href="/contact">संपर्क साधा</a>
+      </div>
+    </div>
+    <div class="hero-portrait">
+      <div class="portrait-frame"><span class="portrait-initials">सु</span></div>
+      <span class="portrait-badge">धुळे, महाराष्ट्र</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="panel">
+        <div class="panel-head"><h2>साहित्यिक आणि सामाजिक कार्य</h2></div>
+        <div class="panel-body prose">
+          <p>
+            प्रा. डॉ. सदाशिव सुर्यवंशी हे धुळे जिल्ह्यातील मराठी साहित्यिक आणि गझलकार आहेत.
+            ते <strong>खान्देश साहित्य संघाचे राष्ट्रीय अध्यक्ष</strong> आहेत. संघाच्या माध्यमातून
+            बहुभाषिक साहित्य संमेलने, कवीसंमेलने, गझल मुशायरे आणि साहित्यिक चर्चासत्रे आयोजित केली जातात.
+          </p>
+          <p>
+            अहिराणी भाषा आणि खान्देशच्या इतर बोलीभाषांना साहित्याच्या मुख्य प्रवाहात आणण्यासाठी
+            ते सातत्याने कार्यरत आहेत. अखिल भारतीय अहिराणी साहित्य संमेलनाच्या उपक्रमांतही
+            त्यांचा सक्रिय सहभाग आहे.
+          </p>
+          <p>
+            मराठा सेवा संघाच्या वर्धापन दिन व्याख्यानांसह विविध सामाजिक आणि सांस्कृतिक
+            व्यासपीठांवर ते विचार मांडतात. साहित्य, भाषा आणि सामाजिक प्रबोधन या तिन्ही
+            क्षेत्रांतील त्यांचे कार्य एकमेकांशी जोडलेले आहे.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>संपर्क</h2></div>
+        <div class="panel-body">
+          <p><strong>पत्ता:</strong><br><%= settings['site.address'] %></p>
+          <p><strong>ईमेल:</strong><br><a href="mailto:<%= settings['site.contact_email'] %>"><%= settings['site.contact_email'] %></a></p>
+          <p><strong>दूरध्वनी:</strong><br><a href="tel:<%= settings['site.contact_phone'].replace(/\s+/g, '') %>"><%= settings['site.contact_phone'] %></a></p>
+          <% if (settings['site.facebook']) { %>
+            <p><strong>Facebook:</strong><br><a href="<%= settings['site.facebook'] %>" target="_blank" rel="noopener">Dr. Sadashiv Suryawanshi</a></p>
+          <% } %>
+          <% if (settings['site.youtube']) { %>
+            <p><strong>YouTube:</strong><br><a href="<%= settings['site.youtube'] %>" target="_blank" rel="noopener">अधिकृत चॅनेल</a></p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">कार्यक्षेत्र</span><h2>प्रमुख क्षेत्रे</h2></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><div class="card-body">
+        <h3>मराठी साहित्य</h3>
+        <p class="card-excerpt">लेख, कविता, गझल आणि समीक्षा — मराठी भाषेतील साहित्य निर्मिती आणि प्रसार.</p>
+      </div></div>
+      <div class="card"><div class="card-body">
+        <h3>अहिराणी भाषा</h3>
+        <p class="card-excerpt">खान्देशच्या अहिराणी बोलीभाषेला साहित्यिक व्यासपीठ आणि सन्मान.</p>
+      </div></div>
+      <div class="card"><div class="card-body">
+        <h3>साहित्य चळवळ</h3>
+        <p class="card-excerpt">खान्देश साहित्य संघाच्या माध्यमातून संमेलने, कार्यशाळा आणि नव्या लेखकांचे मार्गदर्शन.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<% if (achievements && achievements.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">कामगिरी</span><h2>निवडक घडामोडी</h2></div>
+      <a class="section-link" href="/news">सर्व बातम्या</a>
+    </div>
+    <ol class="timeline">
+      <% achievements.forEach(function (post) { %>
+        <li class="timeline-item">
+          <time datetime="<%= post.published_at %>"><%= helpers.formatDateMr(post.published_at) %></time>
+          <h3><a href="/news/<%= post.slug %>"><%= post.title %></a></h3>
+          <p><%= helpers.truncate(post.excerpt || '', 140) %></p>
+        </li>
+      <% }) %>
+    </ol>
+  </div>
+</section>
+<% } %>
+
+<% if (books && books.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">पुस्तके</span><h2>प्रकाशित साहित्य</h2></div>
+      <a class="section-link" href="/books">सर्व पुस्तके</a>
+    </div>
+    <div class="grid grid-4">
+      <% books.forEach(function (book) { %>
+        <article class="card">
+          <div class="card-cover">
+            <% if (book.cover_url) { %><img src="<%= book.cover_url %>" alt="<%= book.title %>" loading="lazy"><% } else { %><span class="cover-placeholder"><%= helpers.firstChar(book.title) %></span><% } %>
+          </div>
+          <div class="card-body">
+            <h3><%= book.title %></h3>
+            <p class="meta"><%= book.publisher || '' %><% if (book.year) { %><span class="dot"></span><%= book.year %><% } %></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/public-footer') %>

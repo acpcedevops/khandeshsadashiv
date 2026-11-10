@@ -1,0 +1,217 @@
+<%- include('../partials/shell-header', { areaName: typeof adminMode !== 'undefined' && adminMode ? 'admin' : 'dashboard' }) %>
+
+<%
+  const action = typeof formAction !== 'undefined' && formAction
+    ? formAction
+    : (post ? '/dashboard/posts/' + post.id : '/dashboard/posts');
+  const cancel = typeof cancelUrl !== 'undefined' && cancelUrl ? cancelUrl : '/dashboard/posts';
+  const staffMode = typeof adminMode !== 'undefined' ? adminMode : false;
+  const val = (key, fallback) => (form && form[key] !== undefined && form[key] !== null)
+    ? form[key]
+    : (fallback !== undefined ? fallback : '');
+  const checked = (v) => (v === '1' || v === 1 || v === true) ? 'checked' : '';
+  const publishAtValue = val('publish_at') ? String(val('publish_at')).slice(0, 16) : '';
+%>
+
+<% if (post && post.rejection_reason && (post.status === 'changes_requested' || post.status === 'rejected')) { %>
+  <div class="alert alert-warning">
+    <span>
+      <strong>प्रशासकाची टिप्पणी:</strong> <%= post.rejection_reason %>
+    </span>
+  </div>
+<% } %>
+
+<% if (Object.keys(errors).length) { %>
+  <div class="alert alert-error">
+    <span>कृपया खालील त्रुटी दुरुस्त करा आणि पुन्हा प्रयत्न करा.</span>
+  </div>
+<% } %>
+
+<form action="<%= action %>" method="post" enctype="multipart/form-data" data-editor>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <input type="hidden" name="cover_url" value="<%= val('cover_url') %>">
+
+  <div class="panel">
+    <div class="panel-body">
+      <div class="field">
+        <label for="post-title">शीर्षक *</label>
+        <input class="input" id="post-title" type="text" name="title" value="<%= val('title') %>" required maxlength="<%= limits.title %>" placeholder="लेखाचे शीर्षक">
+        <div class="counter" data-counter="title" data-max="<%= limits.title %>"></div>
+        <% if (errors.title) { %><p class="error-text"><%= errors.title %></p><% } %>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="post-type">प्रकार</label>
+          <select class="select" id="post-type" name="type">
+            <option value="article" <%= val('type', 'article') === 'article' ? 'selected' : '' %>>लेख</option>
+            <option value="poem" <%= val('type') === 'poem' ? 'selected' : '' %>>कविता</option>
+            <option value="ghazal" <%= val('type') === 'ghazal' ? 'selected' : '' %>>गझल</option>
+            <option value="story" <%= val('type') === 'story' ? 'selected' : '' %>>कथा</option>
+            <% if (staffMode) { %>
+              <option value="news" <%= val('type') === 'news' ? 'selected' : '' %>>बातमी</option>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="post-language">भाषा</label>
+          <select class="select" id="post-language" name="language">
+            <option value="mr" <%= val('language', 'mr') === 'mr' ? 'selected' : '' %>>मराठी</option>
+            <option value="ahr" <%= val('language') === 'ahr' ? 'selected' : '' %>>अहिराणी</option>
+            <option value="hi" <%= val('language') === 'hi' ? 'selected' : '' %>>हिंदी</option>
+            <option value="en" <%= val('language') === 'en' ? 'selected' : '' %>>इंग्रजी</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-category">विभाग</label>
+        <select class="select" id="post-category" name="category_id">
+          <option value="">— विभाग निवडा —</option>
+          <% categories.forEach(function (category) { %>
+            <option value="<%= category.id %>" <%= String(val('category_id')) === String(category.id) ? 'selected' : '' %>><%= category.name_mr %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="post-excerpt">सारांश</label>
+        <textarea class="textarea" id="post-excerpt" name="excerpt" maxlength="<%= limits.excerpt %>" style="min-height:80px;" placeholder="लेखाचा थोडक्यात परिचय (रिकामे ठेवल्यास स्वयंचलित तयार होईल)"><%= val('excerpt') %></textarea>
+        <div class="counter" data-counter="excerpt" data-max="<%= limits.excerpt %>"></div>
+        <% if (errors.excerpt) { %><p class="error-text"><%= errors.excerpt %></p><% } %>
+      </div>
+
+      <div class="field">
+        <label for="post-body">मजकूर * <span class="hint">(Markdown समर्थित — ओळी जपल्या जातात)</span></label>
+        <div class="editor-grid">
+          <div>
+            <div class="editor-toolbar" role="toolbar" aria-label="मजकूर स्वरूपण">
+              <button type="button" data-md="bold" title="ठळक">B</button>
+              <button type="button" data-md="italic" title="तिरका"><em>I</em></button>
+              <button type="button" data-md="h2" title="उपशीर्षक">H2</button>
+              <button type="button" data-md="h3" title="छोटे शीर्षक">H3</button>
+              <button type="button" data-md="quote" title="अवतरण">❝</button>
+              <button type="button" data-md="list" title="मुद्दे">•</button>
+              <button type="button" data-md="link" title="दुवा">🔗</button>
+              <button type="button" data-md="hr" title="विभाजक">—</button>
+            </div>
+            <textarea class="textarea editor-textarea" id="post-body" name="body_md" data-editor-textarea maxlength="<%= limits.body %>" placeholder="तुमचा लेख किंवा कविता येथे लिहा…"><%= val('body_md') %></textarea>
+            <div class="counter" data-counter="body_md" data-max="<%= limits.body %>"></div>
+            <% if (errors.body_md) { %><p class="error-text"><%= errors.body_md %></p><% } %>
+          </div>
+          <div class="editor-preview" data-editor-preview aria-live="polite">
+            <% if (post && post.body_html) { %><div class="prose"><%- post.body_html %></div><% } else { %><p class="muted">पूर्वावलोकन येथे दिसेल…</p><% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-tags">टॅग्ज</label>
+        <input class="input" id="post-tags" type="text" name="tags" value="<%= val('tags') %>" maxlength="300" placeholder="अहिराणी, लोकगीते, संस्कृती (स्वल्पविरामाने वेगळे)">
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="post-cover">मुखपृष्ठ चित्र</label>
+          <input class="input" id="post-cover" type="file" name="cover" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+          <p class="hint">JPG, PNG, WEBP, GIF, AVIF · कमाल <%= uploadLimitMb %> MB</p>
+          <% if (val('cover_url')) { %>
+            <div class="mt-1">
+              <img src="<%= val('cover_url') %>" alt="सध्याचे मुखपृष्ठ" style="max-height:120px;border-radius:9px;border:1px solid var(--line);">
+              <label class="checkbox mt-1"><input type="checkbox" name="remove_cover" value="1"> सध्याचे चित्र काढा</label>
+            </div>
+          <% } %>
+        </div>
+        <div class="field">
+          <label for="post-cover-alt">चित्राचे वर्णन (alt)</label>
+          <input class="input" id="post-cover-alt" type="text" name="cover_alt" value="<%= val('cover_alt') %>" maxlength="160" placeholder="चित्रात काय आहे?">
+        </div>
+      </div>
+
+      <details class="mt-2" <%= staffMode ? 'open' : '' %>>
+        <summary style="cursor:pointer;font-weight:700;color:var(--brand);">प्रगत पर्याय (SEO, स्लग, स्रोत)</summary>
+        <div class="mt-2">
+          <div class="form-row">
+            <div class="field">
+              <label for="post-slug">स्लग (URL)</label>
+              <input class="input" id="post-slug" type="text" name="slug" value="<%= val('slug') %>" maxlength="100" placeholder="रिकामे ठेवल्यास शीर्षकावरून तयार होईल">
+            </div>
+            <div class="field">
+              <label for="post-seo-title">SEO शीर्षक</label>
+              <input class="input" id="post-seo-title" type="text" name="seo_title" value="<%= val('seo_title') %>" maxlength="120">
+            </div>
+          </div>
+          <div class="field">
+            <label for="post-seo-desc">SEO वर्णन</label>
+            <textarea class="textarea" id="post-seo-desc" name="seo_description" maxlength="300" style="min-height:70px;"><%= val('seo_description') %></textarea>
+          </div>
+          <% if (staffMode) { %>
+            <div class="form-row">
+              <div class="field">
+                <label for="post-source-name">स्रोत नाव</label>
+                <input class="input" id="post-source-name" type="text" name="source_name" value="<%= val('source_name') %>" maxlength="120">
+              </div>
+              <div class="field">
+                <label for="post-source-url">स्रोत दुवा</label>
+                <input class="input" id="post-source-url" type="url" name="source_url" value="<%= val('source_url') %>" maxlength="500">
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <% if (staffMode) { %>
+    <div class="panel">
+      <div class="panel-head"><h2>प्रकाशन आणि प्राधान्य</h2></div>
+      <div class="panel-body">
+        <div class="form-row">
+          <div class="field">
+            <label for="post-status">स्थिती</label>
+            <select class="select" id="post-status" name="status">
+              <option value="draft" <%= val('status', 'draft') === 'draft' ? 'selected' : '' %>>मसुदा</option>
+              <option value="pending_review" <%= val('status') === 'pending_review' ? 'selected' : '' %>>मंजुरी प्रतीक्षेत</option>
+              <option value="approved" <%= val('status') === 'approved' ? 'selected' : '' %>>मंजूर (नियोजित)</option>
+              <option value="published" <%= val('status') === 'published' ? 'selected' : '' %>>प्रकाशित</option>
+              <option value="changes_requested" <%= val('status') === 'changes_requested' ? 'selected' : '' %>>बदल आवश्यक</option>
+              <option value="rejected" <%= val('status') === 'rejected' ? 'selected' : '' %>>नामंजूर</option>
+              <option value="archived" <%= val('status') === 'archived' ? 'selected' : '' %>>संग्रहित</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="post-publish-at">प्रकाशन वेळ (नियोजित)</label>
+            <input class="input" id="post-publish-at" type="datetime-local" name="publish_at" value="<%= publishAtValue %>">
+            <p class="hint">"मंजूर (नियोजित)" स्थितीसाठी वेळ आवश्यक.</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label class="checkbox"><input type="checkbox" name="is_featured" value="1" <%= checked(val('is_featured')) %>> विशेष लेख (मुख्यपृष्ठावर)</label>
+          </div>
+          <div class="field">
+            <label class="checkbox"><input type="checkbox" name="is_pinned" value="1" <%= checked(val('is_pinned')) %>> स्थिर / पिन करा</label>
+          </div>
+        </div>
+        <div class="field" style="max-width:220px;">
+          <label for="post-pin-order">पिन क्रम</label>
+          <input class="input" id="post-pin-order" type="number" name="pin_order" value="<%= val('pin_order', 0) %>" min="0" max="999">
+          <p class="hint">लहान क्रमांक आधी दिसेल.</p>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <div class="flex gap-1" style="flex-wrap:wrap;">
+    <% if (staffMode) { %>
+      <button class="btn btn-primary" type="submit" name="action" value="submit">जतन करा</button>
+    <% } else { %>
+      <button class="btn btn-primary" type="submit" name="action" value="submit">मंजुरीसाठी सादर करा</button>
+      <button class="btn btn-ghost" type="submit" name="action" value="draft">मसुदा जतन करा</button>
+    <% } %>
+    <a class="btn btn-ghost" href="<%= cancel %>">रद्द करा</a>
+  </div>
+</form>
+
+<%- include('../partials/shell-footer') %>

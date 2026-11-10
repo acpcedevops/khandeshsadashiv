@@ -1,0 +1,66 @@
+<%- include('../partials/public-header') %>
+
+<section class="auth-wrap">
+  <div class="auth-card form-card">
+    <h1>लेखक नोंदणी</h1>
+    <p class="sub">नोंदणीनंतर प्रशासकीय मंजुरी आवश्यक आहे. मंजुरीनंतर तुम्ही लेख आणि कविता मंजुरीसाठी सादर करू शकता.</p>
+
+    <form action="/register" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="field">
+        <label for="reg-name">पूर्ण नाव *</label>
+        <input class="input" id="reg-name" type="text" name="name" value="<%= form.name || '' %>" required maxlength="80" autocomplete="name">
+        <% if (errors.name) { %><p class="error-text"><%= errors.name %></p><% } %>
+      </div>
+
+      <div class="field">
+        <label for="reg-email">ईमेल *</label>
+        <input class="input" id="reg-email" type="email" name="email" value="<%= form.email || '' %>" required maxlength="120" autocomplete="email">
+        <% if (errors.email) { %><p class="error-text"><%= errors.email %></p><% } %>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="reg-password">पासवर्ड *</label>
+          <input class="input" id="reg-password" type="password" name="password" required minlength="8" autocomplete="new-password">
+          <% if (errors.password) { %><p class="error-text"><%= errors.password %></p><% } %>
+          <p class="hint">किमान ८ अक्षरे, अक्षर आणि अंक आवश्यक.</p>
+        </div>
+        <div class="field">
+          <label for="reg-confirm">पासवर्ड पुन्हा *</label>
+          <input class="input" id="reg-confirm" type="password" name="confirm" required minlength="8" autocomplete="new-password">
+          <% if (errors.confirm) { %><p class="error-text"><%= errors.confirm %></p><% } %>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="reg-city">शहर / गाव</label>
+          <input class="input" id="reg-city" type="text" name="city" value="<%= form.city || '' %>" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="reg-phone">दूरध्वनी</label>
+          <input class="input" id="reg-phone" type="tel" name="phone" value="<%= form.phone || '' %>" maxlength="20">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="reg-pen">टोपणनाव (पर्यायी)</label>
+        <input class="input" id="reg-pen" type="text" name="pen_name" value="<%= form.pen_name || '' %>" maxlength="80">
+      </div>
+
+      <div class="field">
+        <label for="reg-bio">थोडक्यात परिचय</label>
+        <textarea class="textarea" id="reg-bio" name="bio" maxlength="1200" style="min-height:100px;"><%= form.bio || '' %></textarea>
+        <% if (errors.bio) { %><p class="error-text"><%= errors.bio %></p><% } %>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">नोंदणी करा</button>
+    </form>
+
+    <p class="auth-footer">आधीच खाते आहे? <a href="/login">प्रवेश करा</a></p>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

@@ -1,0 +1,122 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex gap-1 mb-2" style="flex-wrap:wrap;">
+  <a class="chip <%= !filters.status ? 'active' : '' %>" href="/admin/users">सर्व</a>
+  <a class="chip <%= filters.status === 'pending' ? 'active' : '' %>" href="/admin/users?status=pending">मंजुरी प्रतीक्षेत</a>
+  <a class="chip <%= filters.status === 'active' ? 'active' : '' %>" href="/admin/users?status=active">सक्रिय</a>
+  <a class="chip <%= filters.status === 'suspended' ? 'active' : '' %>" href="/admin/users?status=suspended">स्थगित</a>
+  <a class="chip <%= filters.status === 'blocked' ? 'active' : '' %>" href="/admin/users?status=blocked">प्रतिबंधित</a>
+</div>
+
+<div class="filter-bar">
+  <form method="get" action="/admin/users">
+    <label class="sr-only" for="admin-user-q">शोध</label>
+    <input class="input search-input" id="admin-user-q" type="search" name="q" value="<%= filters.q %>" placeholder="नाव, ईमेल किंवा शहर शोधा…">
+    <label class="sr-only" for="admin-user-role">भूमिका</label>
+    <select class="select" id="admin-user-role" name="role">
+      <option value="">सर्व भूमिका</option>
+      <option value="owner" <%= filters.role === 'owner' ? 'selected' : '' %>>मालक</option>
+      <option value="admin" <%= filters.role === 'admin' ? 'selected' : '' %>>प्रशासक</option>
+      <option value="editor" <%= filters.role === 'editor' ? 'selected' : '' %>>संपादक</option>
+      <option value="contributor" <%= filters.role === 'contributor' ? 'selected' : '' %>>लेखक</option>
+      <option value="reader" <%= filters.role === 'reader' ? 'selected' : '' %>>वाचक</option>
+    </select>
+    <% if (filters.status) { %><input type="hidden" name="status" value="<%= filters.status %>"><% } %>
+    <button class="btn btn-primary" type="submit">लागू करा</button>
+    <% if (filters.q || filters.role || filters.status) { %><a class="btn btn-ghost" href="/admin/users">रीसेट</a><% } %>
+  </form>
+</div>
+
+<div class="panel">
+  <% if (users.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>वापरकर्ता</th>
+            <th>भूमिका</th>
+            <th>स्थिती</th>
+            <th>लेख</th>
+            <th>थेट प्रकाशन</th>
+            <th>नोंदणी</th>
+            <th>क्रिया</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(function (person) { %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-1">
+                  <span class="avatar" style="width:32px;height:32px;font-size:0.8rem;">
+                    <% if (person.avatar_url) { %><img src="<%= person.avatar_url %>" alt=""><% } else { %><%= helpers.initials(person.name) %><% } %>
+                  </span>
+                  <div>
+                    <strong><%= person.name %></strong>
+                    <% if (person.pen_name) { %><span class="small muted"> (<%= person.pen_name %>)</span><% } %>
+                    <div class="small muted"><%= person.email %></div>
+                    <% if (person.city) { %><div class="small muted"><%= person.city %></div><% } %>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <form action="/admin/users/<%= person.id %>/role" method="post" class="flex items-center gap-1">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <select class="select" name="role" style="min-width:110px;padding:0.3rem 0.5rem;min-height:0;" aria-label="भूमिका">
+                    <option value="owner" <%= person.role === 'owner' ? 'selected' : '' %>>मालक</option>
+                    <option value="admin" <%= person.role === 'admin' ? 'selected' : '' %>>प्रशासक</option>
+                    <option value="editor" <%= person.role === 'editor' ? 'selected' : '' %>>संपादक</option>
+                    <option value="contributor" <%= person.role === 'contributor' ? 'selected' : '' %>>लेखक</option>
+                    <option value="reader" <%= person.role === 'reader' ? 'selected' : '' %>>वाचक</option>
+                  </select>
+                  <button class="btn btn-ghost btn-sm" type="submit">ठेवा</button>
+                </form>
+              </td>
+              <td>
+                <span class="badge <%= person.status === 'pending' ? 'badge-news' : person.status === 'active' ? 'badge-ahr' : '' %>"><%= helpers.userStatusLabel(person.status) %></span>
+              </td>
+              <td class="small"><%= helpers.toMarathiDigits(person.post_count) %></td>
+              <td class="small"><%= Number(person.auto_publish) === 1 ? 'चालू' : 'बंद' %></td>
+              <td class="small muted"><%= helpers.formatDateMr(person.created_at) %></td>
+              <td>
+                <div class="actions">
+                  <% if (person.status === 'pending') { %>
+                    <form action="/admin/users/<%= person.id %>/approve" method="post" class="inline-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-primary btn-sm" type="submit">मंजूर</button>
+                    </form>
+                    <form action="/admin/users/<%= person.id %>/reject" method="post" class="inline-form" data-confirm="ही नोंदणी नाकारायची आहे का?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-danger btn-sm" type="submit">नाकारा</button>
+                    </form>
+                  <% } %>
+                  <% if (['owner', 'admin'].includes(currentUser.role)) { %>
+                    <form action="/admin/users/<%= person.id %>/auto-publish" method="post" class="inline-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-ghost btn-sm" type="submit"><%= Number(person.auto_publish) === 1 ? 'थेट बंद' : 'थेट चालू' %></button>
+                    </form>
+                  <% } %>
+                  <% if (person.role !== 'owner' && person.id !== currentUser.id) { %>
+                    <form action="/admin/users/<%= person.id %>/suspend" method="post" class="inline-form" data-confirm="<%= person.status === 'suspended' ? 'हे खाते पुन्हा सक्रिय करायचे आहे का?' : 'हे खाते स्थगित करायचे आहे का?' %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-ghost btn-sm" type="submit"><%= person.status === 'suspended' ? 'सक्रिय करा' : 'स्थगित' %></button>
+                    </form>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">👥</div>
+      <h3>वापरकर्ते सापडले नाहीत</h3>
+      <p>या फिल्टरनुसार कोणतेही वापरकर्ते नाहीत.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

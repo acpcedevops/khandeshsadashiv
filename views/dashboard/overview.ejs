@@ -1,0 +1,91 @@
+<%- include('../partials/shell-header', { areaName: 'dashboard' }) %>
+
+<% if (currentUser.status === 'pending') { %>
+  <div class="alert alert-warning">
+    <span>⏳ तुमचे खाते अजून प्रशासकीय मंजुरीच्या प्रतीक्षेत आहे. मंजुरीनंतर तुम्ही लेख आणि कविता सादर करू शकता.</span>
+  </div>
+<% } else if (currentUser.status === 'active') { %>
+  <div class="alert alert-info">
+    <span>✅ तुमचे खाते सक्रिय आहे. नवीन लेख सादर करण्यासाठी <a href="/dashboard/posts/new">येथे क्लिक करा</a>.</span>
+  </div>
+<% } %>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="stat-label">एकूण लेख</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(counts.total) %></div>
+    <div class="stat-note">तुमचे सर्व लेख</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">प्रकाशित</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(counts.published) %></div>
+    <div class="stat-note">सार्वजनिकरित्या दिसणारे</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">मंजुरी प्रतीक्षेत</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(counts.pending) %></div>
+    <div class="stat-note"><% if (counts.changes) { %><%= helpers.toMarathiDigits(counts.changes) %> बदल आवश्यक<% } else { %>पुनरावलोकनासाठी<% } %></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">एकूण वाचन</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(counts.views) %></div>
+    <div class="stat-note">सर्व लेखांची बेरीज</div>
+  </div>
+</div>
+
+<div class="grid grid-2" style="align-items:start;">
+  <div class="panel">
+    <div class="panel-head">
+      <h2>अलीकडील लेख</h2>
+      <a class="btn btn-ghost btn-sm" href="/dashboard/posts">सर्व पहा</a>
+    </div>
+    <% if (recent.length) { %>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>शीर्षक</th><th>स्थिती</th><th>अद्ययावत</th><th></th></tr></thead>
+          <tbody>
+            <% recent.forEach(function (post) { %>
+              <tr>
+                <td><a href="/dashboard/posts/<%= post.id %>/edit"><%= helpers.truncate(post.title, 45) %></a></td>
+                <td><%- include('../partials/status-badge', { status: post.status }) %></td>
+                <td class="small muted"><%= helpers.formatDateMr(post.updated_at) %></td>
+                <td><a class="btn btn-ghost btn-sm" href="/dashboard/posts/<%= post.id %>/edit">संपादन</a></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;">
+        <div class="empty-icon">✍️</div>
+        <h3>अजून लेख नाही</h3>
+        <p>तुमचा पहिला लेख किंवा कविता लिहा.</p>
+        <a class="btn btn-primary" href="/dashboard/posts/new">नवीन लेख</a>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>सूचना</h2>
+      <a class="btn btn-ghost btn-sm" href="/dashboard/notifications">सर्व</a>
+    </div>
+    <div class="panel-body">
+      <% if (notifications.length) { %>
+        <div class="grid" style="gap:0.7rem;">
+          <% notifications.forEach(function (note) { %>
+            <div style="padding:0.7rem 0.8rem;border:1px solid var(--line);border-radius:9px;background:<%= note.read_at ? '#fff' : 'var(--surface-2)' %>;">
+              <div class="small"><strong><%= note.title_mr %></strong></div>
+              <% if (note.body_mr) { %><div class="small muted"><%= note.body_mr %></div><% } %>
+              <div class="meta mt-1"><time><%= helpers.timeAgoMr(note.created_at) %></time></div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">अजून सूचना नाही.</p>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

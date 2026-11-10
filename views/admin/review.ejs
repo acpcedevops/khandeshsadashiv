@@ -1,0 +1,173 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <a class="btn btn-ghost btn-sm" href="/admin/posts">← सर्व लेख</a>
+  <div class="flex gap-1" style="flex-wrap:wrap;">
+    <a class="btn btn-ghost btn-sm" href="/admin/posts/<%= post.id %>/edit">संपादन</a>
+    <% if (post.status === 'published') { %>
+      <a class="btn btn-ghost btn-sm" href="<%= post.type === 'news' ? '/news/' : '/writings/' %><%= post.slug %>" target="_blank" rel="noopener">साइटवर पहा</a>
+    <% } %>
+  </div>
+</div>
+
+<div class="grid grid-2" style="grid-template-columns:1.5fr 1fr;align-items:start;">
+  <div>
+    <div class="panel">
+      <div class="panel-body">
+        <div class="meta mb-1">
+          <span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span>
+          <% if (post.language === 'ahr') { %><span class="badge badge-ahr">अहिराणी</span><% } %>
+          <% if (post.category_name) { %><span class="badge"><%= post.category_name %></span><% } %>
+          <%- include('../partials/status-badge', { status: post.status }) %>
+        </div>
+        <h1 style="font-size:1.7rem;margin:0.3rem 0 0.5rem;"><%= post.title %></h1>
+        <div class="meta mb-2">
+          <span><%= post.author_pen_name || post.author_name %></span>
+          <span class="dot"></span>
+          <span><%= post.author_email %></span>
+          <span class="dot"></span>
+          <span>अद्ययावत: <%= helpers.formatDateMr(post.updated_at) %></span>
+        </div>
+        <% if (post.excerpt) { %><p class="lead"><%= post.excerpt %></p><% } %>
+        <% if (post.cover_url) { %>
+          <figure class="article-cover" style="margin:1rem 0;">
+            <img src="<%= post.cover_url %>" alt="<%= post.cover_alt || post.title %>">
+          </figure>
+        <% } %>
+        <div class="prose <%= post.type === 'poem' ? 'poem-text' : '' %>">
+          <%- post.body_html || '' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>आवृत्ती इतिहास</h2></div>
+      <% if (revisions.length) { %>
+        <div class="panel-body">
+          <div class="grid" style="gap:0.6rem;">
+            <% revisions.forEach(function (revision) { %>
+              <div class="small" style="padding:0.6rem 0.7rem;border:1px solid var(--line);border-radius:9px;">
+                <strong><%= revision.title || '(शीर्षक नाही)' %></strong>
+                <div class="muted"><%= revision.editor_name || 'अज्ञात' %> · <%= helpers.formatDateMr(revision.created_at) %></div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="empty" style="padding:1.5rem;"><p class="muted">अजून आवृत्ती नोंदी नाहीत.</p></div>
+      <% } %>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>टिप्पण्या</h2></div>
+      <% if (comments.length) { %>
+        <div class="panel-body">
+          <div class="grid" style="gap:0.7rem;">
+            <% comments.forEach(function (comment) { %>
+              <div style="padding:0.6rem 0.75rem;border:1px solid var(--line);border-radius:9px;background:<%= comment.status === 'pending' ? 'var(--surface-2)' : '#fff' %>;">
+                <div class="meta mb-1">
+                  <strong><%= comment.author_name %></strong>
+                  <span class="dot"></span>
+                  <span><%= helpers.timeAgoMr(comment.created_at) %></span>
+                  <span class="badge"><%= comment.status === 'pending' ? 'प्रलंबित' : comment.status === 'approved' ? 'मंजूर' : 'नाकारली' %></span>
+                </div>
+                <p class="small" style="margin:0 0 0.4rem;"><%= comment.body %></p>
+                <% if (comment.status === 'pending') { %>
+                  <div class="actions">
+                    <form action="/admin/comments/<%= comment.id %>/approve" method="post" class="inline-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="back" value="/admin/posts/<%= post.id %>">
+                      <button class="btn btn-primary btn-sm" type="submit">मंजूर</button>
+                    </form>
+                    <form action="/admin/comments/<%= comment.id %>/reject" method="post" class="inline-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="back" value="/admin/posts/<%= post.id %>">
+                      <button class="btn btn-danger btn-sm" type="submit">नाकारा</button>
+                    </form>
+                  </div>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="empty" style="padding:1.5rem;"><p class="muted">या लेखावर टिप्पण्या नाहीत.</p></div>
+      <% } %>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel-head"><h2>पुनरावलोकन निर्णय</h2></div>
+      <div class="panel-body">
+        <% if (post.rejection_reason) { %>
+          <div class="alert alert-warning"><span><strong>शेवटची टिप्पणी:</strong> <%= post.rejection_reason %></span></div>
+        <% } %>
+
+        <% if (post.status === 'pending_review' || post.status === 'changes_requested' || post.status === 'draft') { %>
+          <form action="/admin/posts/<%= post.id %>/approve" method="post" class="mb-2">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-primary btn-block" type="submit">मंजूर करा आणि प्रकाशित करा</button>
+            <p class="hint">नियोजित प्रकाशन वेळ सेट असल्यास त्या वेळी प्रकाशित होईल.</p>
+          </form>
+        <% } %>
+
+        <div class="field">
+          <label for="review-changes">बदलांची विनंती</label>
+          <form action="/admin/posts/<%= post.id %>/request-changes" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <textarea class="textarea" id="review-changes" name="reason" required minlength="3" maxlength="1000" style="min-height:90px;" placeholder="लेखकाला काय बदल करायचे आहेत ते लिहा…"></textarea>
+            <button class="btn btn-gold btn-sm mt-1" type="submit">बदलांसाठी परत पाठवा</button>
+          </form>
+        </div>
+
+        <div class="field">
+          <label for="review-reject">नामंजुरीचे कारण</label>
+          <form action="/admin/posts/<%= post.id %>/reject" method="post" data-confirm="हा लेख नामंजूर करायचा आहे का?">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <textarea class="textarea" id="review-reject" name="reason" required minlength="3" maxlength="1000" style="min-height:90px;" placeholder="नामंजुरीचे कारण लिहा…"></textarea>
+            <button class="btn btn-danger btn-sm mt-1" type="submit">नामंजूर करा</button>
+          </form>
+        </div>
+
+        <hr>
+        <form action="/admin/posts/<%= post.id %>/delete" method="post" data-confirm="हा लेख कायमचा हटवायचा आहे का?">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-danger btn-block" type="submit">लेख हटवा</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>प्राधान्य आणि क्रम</h2></div>
+      <div class="panel-body">
+        <form action="/admin/posts/<%= post.id %>/quick" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="back" value="/admin/posts/<%= post.id %>">
+          <label class="checkbox mb-1"><input type="checkbox" name="is_featured" value="1" <%= post.is_featured ? 'checked' : '' %>> विशेष लेख (मुख्यपृष्ठ)</label>
+          <label class="checkbox mb-1"><input type="checkbox" name="is_pinned" value="1" <%= post.is_pinned ? 'checked' : '' %>> स्थिर / पिन करा</label>
+          <div class="field" style="max-width:200px;">
+            <label for="review-pin-order">पिन क्रम</label>
+            <input class="input" id="review-pin-order" type="number" name="pin_order" value="<%= post.pin_order || 0 %>" min="0" max="999">
+            <p class="hint">लहान क्रमांक आधी दिसेल.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" type="submit">जतन करा</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>माहिती</h2></div>
+      <div class="panel-body small">
+        <p><strong>स्लग:</strong><br><code><%= post.slug %></code></p>
+        <p><strong>प्रकाशन वेळ:</strong><br><%= post.publish_at ? helpers.formatDateMr(post.publish_at) : '—' %></p>
+        <p><strong>प्रकाशित:</strong><br><%= post.published_at ? helpers.formatDateMr(post.published_at) : '—' %></p>
+        <p><strong>वाचन:</strong> <%= helpers.toMarathiDigits(post.view_count) %></p>
+        <p><strong>वाचन वेळ:</strong> <%= helpers.readingTimeLabel(post.reading_time) %></p>
+        <% if (post.source_url) { %><p><strong>स्रोत:</strong><br><a href="<%= post.source_url %>" target="_blank" rel="noopener"><%= post.source_name || post.source_url %></a></p><% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

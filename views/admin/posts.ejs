@@ -1,0 +1,107 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-2 mb-2" style="flex-wrap:wrap;">
+  <div class="flex gap-1" style="flex-wrap:wrap;">
+    <a class="chip <%= !filters.status ? 'active' : '' %>" href="/admin/posts">सर्व</a>
+    <a class="chip <%= filters.status === 'pending_review' ? 'active' : '' %>" href="/admin/posts?status=pending_review">मंजुरी प्रतीक्षेत</a>
+    <a class="chip <%= filters.status === 'published' ? 'active' : '' %>" href="/admin/posts?status=published">प्रकाशित</a>
+    <a class="chip <%= filters.status === 'draft' ? 'active' : '' %>" href="/admin/posts?status=draft">मसुदे</a>
+    <a class="chip <%= filters.status === 'changes_requested' ? 'active' : '' %>" href="/admin/posts?status=changes_requested">बदल आवश्यक</a>
+    <a class="chip <%= filters.status === 'rejected' ? 'active' : '' %>" href="/admin/posts?status=rejected">नामंजूर</a>
+  </div>
+  <div class="flex gap-1">
+    <a class="btn btn-ghost btn-sm" href="/admin/posts/new?type=news">+ नवीन बातमी</a>
+    <a class="btn btn-primary btn-sm" href="/admin/posts/new">+ नवीन लेख</a>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <form method="get" action="/admin/posts">
+    <label class="sr-only" for="admin-post-q">शोध</label>
+    <input class="input search-input" id="admin-post-q" type="search" name="q" value="<%= filters.q %>" placeholder="शीर्षक किंवा लेखक शोधा…">
+    <label class="sr-only" for="admin-post-type">प्रकार</label>
+    <select class="select" id="admin-post-type" name="type">
+      <option value="">सर्व प्रकार</option>
+      <option value="article" <%= filters.type === 'article' ? 'selected' : '' %>>लेख</option>
+      <option value="poem" <%= filters.type === 'poem' ? 'selected' : '' %>>कविता</option>
+      <option value="ghazal" <%= filters.type === 'ghazal' ? 'selected' : '' %>>गझल</option>
+      <option value="story" <%= filters.type === 'story' ? 'selected' : '' %>>कथा</option>
+      <option value="news" <%= filters.type === 'news' ? 'selected' : '' %>>बातमी</option>
+    </select>
+    <% if (filters.status) { %><input type="hidden" name="status" value="<%= filters.status %>"><% } %>
+    <button class="btn btn-primary" type="submit">लागू करा</button>
+    <% if (filters.q || filters.type || filters.status) { %><a class="btn btn-ghost" href="/admin/posts">रीसेट</a><% } %>
+  </form>
+</div>
+
+<div class="panel">
+  <% if (posts.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>शीर्षक</th>
+            <th>प्रकार</th>
+            <th>लेखक</th>
+            <th>स्थिती</th>
+            <th>वाचन</th>
+            <th>अद्ययावत</th>
+            <th>क्रम / क्रिया</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% posts.forEach(function (post) { %>
+            <tr>
+              <td>
+                <a href="/admin/posts/<%= post.id %>"><%= helpers.truncate(post.title, 55) %></a>
+                <% if (post.is_pinned) { %><span class="badge">📌 <%= helpers.toMarathiDigits(post.pin_order) %></span><% } %>
+                <% if (post.is_featured) { %><span class="badge">★ विशेष</span><% } %>
+              </td>
+              <td><span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span></td>
+              <td class="small"><%= post.author_pen_name || post.author_name %></td>
+              <td><%- include('../partials/status-badge', { status: post.status }) %></td>
+              <td class="small"><%= helpers.toMarathiDigits(post.view_count) %></td>
+              <td class="small muted"><%= helpers.timeAgoMr(post.updated_at) %></td>
+              <td>
+                <div class="actions">
+                  <% if (post.status === 'pending_review' || post.status === 'changes_requested') { %>
+                    <a class="btn btn-gold btn-sm" href="/admin/posts/<%= post.id %>">पुनरावलोकन</a>
+                  <% } %>
+                  <a class="btn btn-ghost btn-sm" href="/admin/posts/<%= post.id %>/edit">संपादन</a>
+                  <% if (post.status === 'published') { %>
+                    <a class="btn btn-ghost btn-sm" href="<%= post.type === 'news' ? '/news/' : '/writings/' %><%= post.slug %>" target="_blank" rel="noopener">पहा</a>
+                  <% } %>
+                  <form action="/admin/posts/<%= post.id %>/delete" method="post" class="inline-form" data-confirm="हा लेख कायमचा हटवायचा आहे का?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                  </form>
+                </div>
+                <form action="/admin/posts/<%= post.id %>/quick" method="post" class="flex items-center gap-1 mt-1" style="flex-wrap:wrap;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="is_featured" value="<%= post.is_featured ? '1' : '0' %>">
+                  <input type="hidden" name="back" value="/admin/posts<%= filters.status ? '?status=' + filters.status : '' %>">
+                  <label class="checkbox small" style="gap:0.3rem;">
+                    <input type="checkbox" name="is_pinned" value="1" <%= post.is_pinned ? 'checked' : '' %>> पिन
+                  </label>
+                  <input class="input" type="number" name="pin_order" value="<%= post.pin_order || 0 %>" min="0" max="999" style="width:74px;padding:0.25rem 0.45rem;min-height:0;" aria-label="पिन क्रम">
+                  <button class="btn btn-ghost btn-sm" type="submit">जतन</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📝</div>
+      <h3>लेख सापडले नाहीत</h3>
+      <p>या फिल्टरनुसार कोणतेही लेख नाहीत.</p>
+      <a class="btn btn-primary" href="/admin/posts/new">नवीन लेख तयार करा</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

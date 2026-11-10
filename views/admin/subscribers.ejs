@@ -1,0 +1,40 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">वृत्तपत्रासाठी नोंदणीकृत ईमेल पत्ते.</p>
+  <a class="btn btn-gold btn-sm" href="/admin/subscribers.csv">CSV डाउनलोड करा</a>
+</div>
+
+<div class="panel">
+  <% if (subscribers.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>ईमेल</th><th>नाव</th><th>स्थिती</th><th>नोंदणी</th><th>क्रिया</th></tr></thead>
+        <tbody>
+          <% subscribers.forEach(function (subscriber) { %>
+            <tr>
+              <td><a href="mailto:<%= subscriber.email %>"><%= subscriber.email %></a></td>
+              <td class="small"><%= subscriber.name || '—' %></td>
+              <td><span class="badge <%= subscriber.status === 'subscribed' ? 'badge-ahr' : '' %>"><%= subscriber.status === 'subscribed' ? 'सदस्य' : subscriber.status %></span></td>
+              <td class="small muted"><%= helpers.formatDateMr(subscriber.created_at) %></td>
+              <td>
+                <form action="/admin/subscribers/<%= subscriber.id %>/delete" method="post" class="inline-form" data-confirm="हा ग्राहक यादीतून हटवायचा आहे का?">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📧</div>
+      <h3>अजून ग्राहक नाहीत</h3>
+      <p>वृत्तपत्र नोंदणी झाल्यावर ईमेल येथे दिसतील.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

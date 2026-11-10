@@ -1,0 +1,28 @@
+<%
+  const url = post.type === 'news' ? '/news/' + post.slug : '/writings/' + post.slug;
+%>
+<article class="card">
+  <a class="card-cover" href="<%= url %>" aria-hidden="true" tabindex="-1">
+    <% if (post.cover_url) { %>
+      <img src="<%= post.cover_url %>" alt="<%= post.cover_alt || post.title %>" loading="lazy">
+    <% } else { %>
+      <span class="cover-placeholder"><%= helpers.firstChar(post.title) %></span>
+    <% } %>
+  </a>
+  <div class="card-body">
+    <div class="meta mb-1">
+      <span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span>
+      <% if (post.language === 'ahr') { %><span class="badge badge-ahr">अहिराणी</span><% } %>
+      <% if (post.is_pinned) { %><span class="badge">📌 स्थिर</span><% } %>
+      <time datetime="<%= post.published_at || '' %>"><%= helpers.formatDateMr(post.published_at) %></time>
+    </div>
+    <h3><a href="<%= url %>"><%= post.title %></a></h3>
+    <% if (post.excerpt) { %><p class="card-excerpt"><%= helpers.truncate(post.excerpt, 140) %></p><% } %>
+    <div class="meta">
+      <span><%= post.author_pen_name || post.author_name || 'डॉ. सदाशिव सुर्यवंशी' %></span>
+      <span class="dot"></span>
+      <span><%= helpers.readingTimeLabel(post.reading_time) %></span>
+      <% if (post.category_name) { %><span class="dot"></span><span><%= post.category_name %></span><% } %>
+    </div>
+  </div>
+</article>

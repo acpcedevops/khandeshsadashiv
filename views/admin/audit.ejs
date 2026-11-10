@@ -1,0 +1,57 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">प्रशासकीय आणि सामग्रीशी संबंधित सर्व क्रियांची नोंद.</p>
+  <span class="badge"><%= helpers.toMarathiDigits(pagination.total) %> नोंदी</span>
+</div>
+
+<div class="panel">
+  <% if (logs.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>वेळ</th>
+            <th>वापरकर्ता</th>
+            <th>क्रिया</th>
+            <th>घटक</th>
+            <th>तपशील</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(function (log) { %>
+            <tr>
+              <td class="small muted" style="white-space:nowrap;"><%= helpers.formatDateTimeMr(log.created_at) %></td>
+              <td class="small"><%= log.actor_name || 'प्रणाली' %></td>
+              <td><code class="small"><%= log.action %></code></td>
+              <td class="small">
+                <% if (log.entity) { %>
+                  <%= log.entity %><% if (log.entity_id) { %> <span class="muted">#<%= helpers.toMarathiDigits(log.entity_id) %></span><% } %>
+                <% } else { %>
+                  <span class="muted">—</span>
+                <% } %>
+              </td>
+              <td class="small muted" style="max-width:320px;">
+                <% if (log.meta_json) { %>
+                  <code style="word-break:break-word;"><%= helpers.truncate(log.meta_json, 140) %></code>
+                <% } else { %>
+                  —
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <h3>अजून नोंदी नाहीत</h3>
+      <p>प्रशासकीय क्रिया झाल्यावर त्या येथे दिसतील.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

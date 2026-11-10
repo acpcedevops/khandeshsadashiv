@@ -1,0 +1,65 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="grid grid-2" style="align-items:start;">
+  <div class="panel">
+    <div class="panel-head"><h2>नवीन दालन</h2></div>
+    <div class="panel-body">
+      <form action="/admin/gallery" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label for="album-title">दालनाचे नाव *</label>
+          <input class="input" id="album-title" type="text" name="title_mr" required maxlength="120" placeholder="उदा. खान्देश साहित्य संमेलन २०२५">
+        </div>
+        <div class="field">
+          <label for="album-slug">स्लग (रिकामे ठेवल्यास स्वयंचलित)</label>
+          <input class="input" id="album-slug" type="text" name="slug" maxlength="100">
+        </div>
+        <div class="field">
+          <label for="album-description">तपशील</label>
+          <textarea class="textarea" id="album-description" name="description_mr" maxlength="600" style="min-height:90px;"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">दालन तयार करा</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h2>दालने</h2></div>
+    <% if (albums.length) { %>
+      <div class="panel-body">
+        <div class="grid" style="gap:0.8rem;">
+          <% albums.forEach(function (album) { %>
+            <div class="flex justify-between items-center gap-1" style="padding:0.65rem 0.75rem;border:1px solid var(--line);border-radius:9px;">
+              <div class="flex items-center gap-1">
+                <% if (album.cover_url) { %>
+                  <img src="<%= album.cover_url %>" alt="" style="width:52px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--line);">
+                <% } else { %>
+                  <span class="avatar" style="border-radius:8px;width:52px;height:40px;">🖼️</span>
+                <% } %>
+                <div>
+                  <strong><%= album.title_mr %></strong>
+                  <div class="small muted"><%= helpers.toMarathiDigits(album.photo_count) %> छायाचित्रे</div>
+                </div>
+              </div>
+              <div class="actions">
+                <a class="btn btn-ghost btn-sm" href="/admin/gallery/<%= album.id %>">व्यवस्थापन</a>
+                <form action="/admin/gallery/<%= album.id %>/delete" method="post" class="inline-form" data-confirm="हे दालन आणि त्यातील सर्व छायाचित्रे हटवायची आहेत का?">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;">
+        <div class="empty-icon">🖼️</div>
+        <h3>अजून दालने नाहीत</h3>
+        <p>डाव्या बाजूने नवीन दालन तयार करा.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

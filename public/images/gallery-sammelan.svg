@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="साहित्य संमेलन — नमुना छायाचित्र">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a1f1f"/>
+      <stop offset="0.55" stop-color="#9c2b2b"/>
+      <stop offset="1" stop-color="#5c1414"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#efe3c2"/>
+      <stop offset="1" stop-color="#c8a24a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <g opacity="0.12" fill="none" stroke="#fbf7ef" stroke-width="2">
+    <circle cx="1040" cy="140" r="220"/>
+    <circle cx="1040" cy="140" r="150"/>
+    <circle cx="160" cy="780" r="260"/>
+    <circle cx="160" cy="780" r="190"/>
+  </g>
+  <g fill="url(#gold)" opacity="0.9">
+    <rect x="120" y="150" width="120" height="6" rx="3"/>
+    <rect x="120" y="176" width="72" height="6" rx="3"/>
+  </g>
+  <text x="120" y="330" font-family="'Tiro Devanagari Marathi','Noto Sans Devanagari',serif" font-size="92" fill="#fbf7ef">साहित्य</text>
+  <text x="120" y="450" font-family="'Tiro Devanagari Marathi','Noto Sans Devanagari',serif" font-size="92" fill="#fbf7ef">संमेलन</text>
+  <text x="124" y="560" font-family="'Mukta','Noto Sans Devanagari',sans-serif" font-size="34" fill="#efe3c2">खान्देश साहित्य संघ · नमुना छायाचित्र</text>
+  <g transform="translate(120,650)" fill="none" stroke="#c8a24a" stroke-width="3">
+    <path d="M0 0h180M0 24h120M0 48h150"/>
+  </g>
+</svg>

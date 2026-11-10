@@ -1,0 +1,20 @@
+<% if (news && news.length) { %>
+<section class="section-tight">
+  <div class="container">
+    <div class="news-band">
+      <div class="news-band-head">
+        <span class="eyebrow">ताज्या बातम्या</span>
+        <a href="/news">सर्व बातम्या →</a>
+      </div>
+      <div class="news-band-grid">
+        <% news.forEach(function (post) { %>
+          <a class="news-band-item" href="/news/<%= post.slug %>">
+            <time datetime="<%= post.published_at %>"><%= helpers.formatDateMr(post.published_at) %></time>
+            <h3><%= post.title %></h3>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>

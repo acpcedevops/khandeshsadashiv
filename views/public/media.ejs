@@ -1,0 +1,40 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">वृत्तपत्रांत</span>
+    <h1>बातम्या आणि उल्लेख</h1>
+    <p class="muted" style="max-width:65ch;">वृत्तपत्रे, वेबसाइट आणि माध्यमांमधील बातम्या, मुलाखती आणि उल्लेख.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <% if (media.length) { %>
+      <div class="grid grid-2">
+        <% media.forEach(function (item) { %>
+          <article class="card">
+            <div class="card-body">
+              <div class="meta mb-1">
+                <% if (item.publication) { %><span class="badge"><%= item.publication %></span><% } %>
+                <% if (item.published_on) { %><time datetime="<%= item.published_on %>"><%= helpers.formatDateMr(item.published_on) %></time><% } %>
+              </div>
+              <h3><%= item.title_mr %></h3>
+              <% if (item.url) { %>
+                <a class="btn btn-ghost btn-sm" href="<%= item.url %>" target="_blank" rel="noopener">मूळ बातमी वाचा →</a>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty-icon">📰</div>
+        <h3>उल्लेख लवकरच</h3>
+        <p>वृत्तपत्रांतील बातम्यांची यादी भरली जात आहे.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

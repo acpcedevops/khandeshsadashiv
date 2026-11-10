@@ -1,0 +1,55 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex justify-between items-center gap-1 mb-2" style="flex-wrap:wrap;">
+  <p class="muted mb-0">पुस्तके, प्रकाशने आणि खरेदी दुवे.</p>
+  <a class="btn btn-primary" href="/admin/books/new">+ नवीन पुस्तक</a>
+</div>
+
+<div class="panel">
+  <% if (books.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>पुस्तक</th><th>प्रकाशक</th><th>वर्ष</th><th>ISBN</th><th>क्रम</th><th>क्रिया</th></tr></thead>
+        <tbody>
+          <% books.forEach(function (book) { %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-1">
+                  <% if (book.cover_url) { %>
+                    <img src="<%= book.cover_url %>" alt="" style="width:44px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line);">
+                  <% } %>
+                  <div>
+                    <strong><%= book.title %></strong>
+                    <% if (book.description_mr) { %><div class="small muted"><%= helpers.truncate(book.description_mr, 70) %></div><% } %>
+                  </div>
+                </div>
+              </td>
+              <td class="small"><%= book.publisher || '—' %></td>
+              <td class="small"><%= book.year || '—' %></td>
+              <td class="small"><%= book.isbn || '—' %></td>
+              <td class="small"><%= helpers.toMarathiDigits(book.sort_order) %></td>
+              <td>
+                <div class="actions">
+                  <a class="btn btn-ghost btn-sm" href="/admin/books/<%= book.id %>/edit">संपादन</a>
+                  <form action="/admin/books/<%= book.id %>/delete" method="post" class="inline-form" data-confirm="हे पुस्तक हटवायचे आहे का?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📚</div>
+      <h3>अजून पुस्तके नाहीत</h3>
+      <p>प्रकाशित पुस्तकांची माहिती येथे जोडा.</p>
+      <a class="btn btn-primary" href="/admin/books/new">नवीन पुस्तक जोडा</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/shell-footer') %>

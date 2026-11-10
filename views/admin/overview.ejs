@@ -1,0 +1,212 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="stat-label">एकूण लेख</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.posts) %></div>
+    <div class="stat-note"><%= helpers.toMarathiDigits(stats.published) %> प्रकाशित</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">मंजुरी प्रतीक्षेत</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.pendingPosts) %></div>
+    <div class="stat-note"><a href="/admin/posts?status=pending_review">पुनरावलोकन करा</a></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">वापरकर्ते</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.users) %></div>
+    <div class="stat-note"><%= helpers.toMarathiDigits(stats.pendingUsers) %> मंजुरी प्रतीक्षेत</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">एकूण वाचन</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.views) %></div>
+    <div class="stat-note">सर्व लेखांची बेरीज</div>
+  </div>
+</div>
+
+<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+  <div class="stat">
+    <div class="stat-label">टिप्पण्या प्रतीक्षेत</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.pendingComments) %></div>
+    <div class="stat-note"><a href="/admin/comments">पुनरावलोकन करा</a></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">वृत्तपत्र ग्राहक</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.subscribers) %></div>
+    <div class="stat-note"><a href="/admin/subscribers">यादी पहा</a></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">न वाचलेले संदेश</div>
+    <div class="stat-value"><%= helpers.toMarathiDigits(stats.unreadMessages) %></div>
+    <div class="stat-note"><a href="/admin/messages">संदेश पहा</a></div>
+  </div>
+</div>
+
+<div class="grid grid-2" style="align-items:start;">
+  <div class="panel">
+    <div class="panel-head">
+      <h2>मंजुरीसाठी सादर लेख</h2>
+      <a class="btn btn-ghost btn-sm" href="/admin/posts?status=pending_review">सर्व</a>
+    </div>
+    <% if (pendingPosts.length) { %>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>शीर्षक</th><th>लेखक</th><th>सादर</th><th></th></tr></thead>
+          <tbody>
+            <% pendingPosts.forEach(function (post) { %>
+              <tr>
+                <td>
+                  <a href="/admin/posts/<%= post.id %>"><%= helpers.truncate(post.title, 42) %></a>
+                  <div class="small muted"><span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span></div>
+                </td>
+                <td class="small"><%= post.author_pen_name || post.author_name %></td>
+                <td class="small muted"><%= helpers.timeAgoMr(post.updated_at) %></td>
+                <td>
+                  <div class="actions">
+                    <a class="btn btn-gold btn-sm" href="/admin/posts/<%= post.id %>">पुनरावलोकन</a>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;">
+        <div class="empty-icon">✅</div>
+        <h3>काही प्रलंबित नाही</h3>
+        <p>सध्या मंजुरीची प्रतीक्षा असलेला लेख नाही.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>नवीन लेखक नोंदणी</h2>
+      <a class="btn btn-ghost btn-sm" href="/admin/users?status=pending">सर्व</a>
+    </div>
+    <% if (pendingUsers.length) { %>
+      <div class="panel-body">
+        <div class="grid" style="gap:0.7rem;">
+          <% pendingUsers.forEach(function (person) { %>
+            <div class="flex justify-between items-center gap-1" style="padding:0.65rem 0.75rem;border:1px solid var(--line);border-radius:9px;">
+              <div>
+                <strong><%= person.name %></strong>
+                <div class="small muted"><%= person.email %><% if (person.city) { %> · <%= person.city %><% } %></div>
+                <div class="small muted">नोंदणी: <%= helpers.timeAgoMr(person.created_at) %></div>
+              </div>
+              <div class="actions">
+                <form action="/admin/users/<%= person.id %>/approve" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-primary btn-sm" type="submit">मंजूर</button>
+                </form>
+                <form action="/admin/users/<%= person.id %>/reject" method="post" class="inline-form" data-confirm="ही नोंदणी नाकारायची आहे का?">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-danger btn-sm" type="submit">नाकारा</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;">
+        <div class="empty-icon">👥</div>
+        <h3>प्रलंबित नोंदणी नाही</h3>
+        <p>नवीन लेखक नोंदणी झाल्यावर येथे दिसेल.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<div class="grid grid-2" style="align-items:start;">
+  <div class="panel">
+    <div class="panel-head">
+      <h2>प्रलंबित टिप्पण्या</h2>
+      <a class="btn btn-ghost btn-sm" href="/admin/comments">सर्व</a>
+    </div>
+    <% if (recentComments.length) { %>
+      <div class="panel-body">
+        <div class="grid" style="gap:0.8rem;">
+          <% recentComments.forEach(function (comment) { %>
+            <div style="padding:0.7rem 0.8rem;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);">
+              <div class="meta mb-1">
+                <strong><%= comment.author_name %></strong>
+                <span class="dot"></span>
+                <span><%= helpers.timeAgoMr(comment.created_at) %></span>
+              </div>
+              <div class="small muted mb-1">लेख: <%= comment.post_title %></div>
+              <p class="small" style="margin:0 0 0.5rem;"><%= helpers.truncate(comment.body, 160) %></p>
+              <div class="actions">
+                <form action="/admin/comments/<%= comment.id %>/approve" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="back" value="/admin">
+                  <button class="btn btn-primary btn-sm" type="submit">मंजूर</button>
+                </form>
+                <form action="/admin/comments/<%= comment.id %>/reject" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="back" value="/admin">
+                  <button class="btn btn-danger btn-sm" type="submit">नाकारा</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;">
+        <div class="empty-icon">💬</div>
+        <h3>प्रलंबित टिप्पण्या नाहीत</h3>
+        <p>नवीन टिप्पण्या मंजुरीसाठी येथे दिसतील.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>अलीकडील क्रिया</h2>
+      <a class="btn btn-ghost btn-sm" href="/admin/audit">ऑडिट लॉग</a>
+    </div>
+    <% if (recentAudit.length) { %>
+      <div class="panel-body">
+        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:0.6rem;">
+          <% recentAudit.forEach(function (log) { %>
+            <li class="small" style="padding-bottom:0.5rem;border-bottom:1px solid var(--line);">
+              <strong><%= log.actor_name || 'प्रणाली' %></strong>
+              <span class="muted">— <%= log.action %></span>
+              <div class="muted"><%= helpers.timeAgoMr(log.created_at) %></div>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } else { %>
+      <div class="empty" style="padding:2rem 1rem;"><p class="muted">अजून नोंदी नाहीत.</p></div>
+    <% } %>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <h2>अलीकडे संपादित लेख</h2>
+    <a class="btn btn-ghost btn-sm" href="/admin/posts">सर्व लेख</a>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>शीर्षक</th><th>प्रकार</th><th>लेखक</th><th>स्थिती</th><th>वाचन</th><th>अद्ययावत</th><th></th></tr></thead>
+      <tbody>
+        <% recentPosts.forEach(function (post) { %>
+          <tr>
+            <td><a href="/admin/posts/<%= post.id %>"><%= helpers.truncate(post.title, 50) %></a></td>
+            <td><span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span></td>
+            <td class="small"><%= post.author_pen_name || post.author_name %></td>
+            <td><%- include('../partials/status-badge', { status: post.status }) %></td>
+            <td class="small"><%= helpers.toMarathiDigits(post.view_count) %></td>
+            <td class="small muted"><%= helpers.timeAgoMr(post.updated_at) %></td>
+            <td><a class="btn btn-ghost btn-sm" href="/admin/posts/<%= post.id %>/edit">संपादन</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

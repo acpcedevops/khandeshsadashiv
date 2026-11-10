@@ -1,0 +1,46 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">छायाचित्र दालन</span>
+    <h1>क्षणचित्रे</h1>
+    <p class="muted" style="max-width:65ch;">साहित्यिक कार्यक्रम, संमेलने आणि साहित्यिक प्रवासातील निवडक क्षण.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <% if (albums.length) { %>
+      <% albums.forEach(function (album) { %>
+        <% const photos = photosByAlbum.get(album.id) || []; %>
+        <div class="section-head">
+          <div>
+            <h2><%= album.title_mr %></h2>
+            <% if (album.description_mr) { %><p class="muted small"><%= album.description_mr %></p><% } %>
+          </div>
+          <span class="small muted"><%= helpers.toMarathiDigits(photos.length) %> छायाचित्रे</span>
+        </div>
+        <% if (photos.length) { %>
+          <div class="grid grid-4 mb-3">
+            <% photos.forEach(function (photo) { %>
+              <figure class="card" style="margin:0;">
+                <img src="<%= photo.url %>" alt="<%= photo.alt_mr || album.title_mr %>" loading="lazy" style="aspect-ratio:4/3;object-fit:cover;width:100%;">
+                <% if (photo.caption_mr) { %><figcaption class="card-body small muted" style="padding:0.6rem 0.8rem;"><%= photo.caption_mr %></figcaption><% } %>
+              </figure>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="muted">या दालनात अजून छायाचित्रे जोडलेली नाहीत.</p>
+        <% } %>
+      <% }) %>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty-icon">🖼️</div>
+        <h3>छायाचित्र दालन लवकरच</h3>
+        <p>कार्यक्रमांची छायाचित्रे येथे प्रकाशित होतील.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

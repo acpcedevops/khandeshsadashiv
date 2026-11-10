@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle ? pageTitle + ' — ' + settings['site.name'] : settings['site.name'] + ' — ' + settings['site.tagline'] %></title>
+  <meta name="description" content="<%= metaDescription || settings['site.description'] %>">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <link rel="canonical" href="<%= siteUrl + currentPath %>">
+  <meta property="og:site_name" content="<%= settings['site.name'] %>">
+  <meta property="og:title" content="<%= pageTitle || settings['site.name'] %>">
+  <meta property="og:description" content="<%= metaDescription || settings['site.description'] %>">
+  <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+  <meta property="og:url" content="<%= siteUrl + currentUrl %>">
+  <% if (typeof ogImage !== 'undefined' && ogImage) { %>
+  <meta property="og:image" content="<%= ogImage.startsWith('http') ? ogImage : siteUrl + ogImage %>">
+  <% } %>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#7a1f1f">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="alternate" type="application/rss+xml" title="RSS फीड" href="/rss.xml">
+</head>
+<body class="<%= bodyClass || '' %>">
+<a class="skip-link" href="#main">मुख्य मजकुरावर जा</a>
+
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-links">
+      <span>✉ <a href="mailto:<%= settings['site.contact_email'] %>"><%= settings['site.contact_email'] %></a></span>
+      <span>☎ <a href="tel:<%= settings['site.contact_phone'].replace(/\s+/g, '') %>"><%= settings['site.contact_phone'] %></a></span>
+    </div>
+    <div class="topbar-links">
+      <% if (settings['site.facebook']) { %><a href="<%= settings['site.facebook'] %>" target="_blank" rel="noopener">Facebook</a><% } %>
+      <% if (settings['site.youtube']) { %><a href="<%= settings['site.youtube'] %>" target="_blank" rel="noopener">YouTube</a><% } %>
+      <% if (settings['site.instagram']) { %><a href="<%= settings['site.instagram'] %>" target="_blank" rel="noopener">Instagram</a><% } %>
+      <% if (settings['site.x']) { %><a href="<%= settings['site.x'] %>" target="_blank" rel="noopener">X</a><% } %>
+    </div>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/" aria-label="मुख्यपृष्ठ">
+      <span class="brand-mark">सु</span>
+      <span class="brand-text">
+        <span class="brand-name"><%= settings['site.name'] %></span>
+        <span class="brand-sub">साहित्य · गझल · अहिराणी</span>
+      </span>
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label="मुख्य मेनू">
+      <a href="/" aria-current="<%= currentPath === '/' ? 'page' : 'false' %>">मुख्यपृष्ठ</a>
+      <a href="/about" aria-current="<%= currentPath === '/about' ? 'page' : 'false' %>">परिचय</a>
+      <a href="/writings" aria-current="<%= currentPath.startsWith('/writings') ? 'page' : 'false' %>">साहित्य</a>
+      <a href="/news" aria-current="<%= currentPath.startsWith('/news') ? 'page' : 'false' %>">बातम्या</a>
+      <a href="/books" aria-current="<%= currentPath === '/books' ? 'page' : 'false' %>">पुस्तके</a>
+      <a href="/events" aria-current="<%= currentPath === '/events' ? 'page' : 'false' %>">कार्यक्रम</a>
+      <a href="/gallery" aria-current="<%= currentPath === '/gallery' ? 'page' : 'false' %>">दालन</a>
+      <a href="/media" aria-current="<%= currentPath === '/media' ? 'page' : 'false' %>">वृत्तपत्रांत</a>
+      <a href="/contact" aria-current="<%= currentPath === '/contact' ? 'page' : 'false' %>">संपर्क</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" data-search-open aria-label="शोधा">🔍</button>
+      <% if (currentUser) { %>
+        <% if (['owner', 'admin', 'editor'].includes(currentUser.role)) { %>
+          <a class="btn btn-ghost btn-sm" href="/admin">प्रशासन</a>
+        <% } %>
+        <a class="btn btn-primary btn-sm" href="/dashboard">डॅशबोर्ड</a>
+        <form action="/logout" method="post" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-ghost btn-sm" type="submit">बाहेर</button>
+        </form>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm" href="/login">प्रवेश</a>
+        <a class="btn btn-primary btn-sm" href="/register">लेखक व्हा</a>
+      <% } %>
+      <button class="icon-btn nav-toggle" type="button" data-nav-toggle aria-label="मेनू उघडा" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<%- include('flash') %>

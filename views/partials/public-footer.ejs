@@ -1,0 +1,83 @@
+</main>
+
+<div class="search-overlay" data-search-overlay aria-hidden="true">
+  <div class="search-box" role="dialog" aria-modal="true" aria-label="शोध">
+    <form action="/search" method="get">
+      <label class="sr-only" for="overlay-search">शोध शब्द</label>
+      <input class="input" id="overlay-search" type="search" name="q" placeholder="लेख, कविता, बातमी शोधा…" data-search-input>
+      <button class="btn btn-primary" type="submit">शोधा</button>
+    </form>
+    <p class="search-hint">उदा. अहिराणी, गझल, खान्देश साहित्य संघ — बंद करण्यासाठी Esc दाबा.</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="brand" href="/">
+          <span class="brand-mark">सु</span>
+          <span class="brand-text">
+            <span class="brand-name"><%= settings['site.name'] %></span>
+            <span class="brand-sub">Marathi Literature</span>
+          </span>
+        </a>
+        <p class="footer-about"><%= settings['site.description'] %></p>
+        <p class="footer-about"><%= settings['site.address'] %></p>
+      </div>
+
+      <div class="footer-col">
+        <h3>साहित्य</h3>
+        <ul>
+          <li><a href="/writings?type=article">लेख</a></li>
+          <li><a href="/writings?type=poem">कविता</a></li>
+          <li><a href="/writings?language=ahr">अहिराणी</a></li>
+          <li><a href="/writings?category=gazal">गझल</a></li>
+          <li><a href="/books">पुस्तके</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>दुवे</h3>
+        <ul>
+          <li><a href="/about">परिचय</a></li>
+          <li><a href="/news">बातम्या</a></li>
+          <li><a href="/events">कार्यक्रम</a></li>
+          <li><a href="/gallery">छायाचित्र दालन</a></li>
+          <li><a href="/rss.xml">RSS फीड</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>संपर्क</h3>
+        <ul>
+          <li><a href="mailto:<%= settings['site.contact_email'] %>"><%= settings['site.contact_email'] %></a></li>
+          <li><a href="tel:<%= settings['site.contact_phone'].replace(/\s+/g, '') %>"><%= settings['site.contact_phone'] %></a></li>
+          <li><a href="/contact">संदेश पाठवा</a></li>
+        </ul>
+        <% if (settings['features.newsletter'] === '1') { %>
+        <form action="/newsletter" method="post" class="mt-2">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="redirect" value="<%= currentPath %>">
+          <label class="sr-only" for="footer-newsletter">ईमेल</label>
+          <input class="input" id="footer-newsletter" type="email" name="email" placeholder="तुमचा ईमेल" required>
+          <button class="btn btn-gold btn-sm btn-block mt-1" type="submit">नोंदणी करा</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <%= helpers.toMarathiDigits(currentYear) %> <%= settings['site.owner_name'] %>. सर्व हक्क राखीव.</span>
+      <span class="legal-links">
+        <a href="/about">परिचय</a>
+        <a href="/contact">संपर्क</a>
+        <a href="/sitemap.xml">साइटमॅप</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/app.js" defer></script>
+</body>
+</html>

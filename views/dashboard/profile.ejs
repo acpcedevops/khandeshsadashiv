@@ -1,0 +1,127 @@
+<%- include('../partials/shell-header', { areaName: 'dashboard' }) %>
+
+<div class="grid grid-2" style="align-items:start;">
+  <div class="panel">
+    <div class="panel-head"><h2>माझी माहिती</h2></div>
+    <div class="panel-body">
+      <form action="/dashboard/profile" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="flex items-center gap-2 mb-2">
+          <span class="avatar" style="width:64px;height:64px;font-size:1.3rem;">
+            <% if (profile.avatar_url) { %><img src="<%= profile.avatar_url %>" alt=""><% } else { %><%= helpers.initials(profile.name) %><% } %>
+          </span>
+          <div>
+            <div class="small muted">ईमेल: <%= profile.email %></div>
+            <div class="small muted">भूमिका: <%= helpers.roleLabel(profile.role) %> · <%= helpers.userStatusLabel(profile.status) %></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="profile-avatar">प्रोफाइल चित्र</label>
+          <input class="input" id="profile-avatar" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+          <p class="hint">JPG, PNG, WEBP, GIF, AVIF · कमाल <%= uploadLimitMb %> MB</p>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="profile-name">पूर्ण नाव *</label>
+            <input class="input" id="profile-name" type="text" name="name" value="<%= profile.name || '' %>" required maxlength="80">
+            <% if (errors.name) { %><p class="error-text"><%= errors.name %></p><% } %>
+          </div>
+          <div class="field">
+            <label for="profile-pen">टोपणनाव</label>
+            <input class="input" id="profile-pen" type="text" name="pen_name" value="<%= profile.pen_name || '' %>" maxlength="80">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="profile-city">शहर / गाव</label>
+            <input class="input" id="profile-city" type="text" name="city" value="<%= profile.city || '' %>" maxlength="80">
+          </div>
+          <div class="field">
+            <label for="profile-phone">दूरध्वनी</label>
+            <input class="input" id="profile-phone" type="tel" name="phone" value="<%= profile.phone || '' %>" maxlength="20">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="profile-bio">परिचय</label>
+          <textarea class="textarea" id="profile-bio" name="bio" maxlength="1200" style="min-height:110px;"><%= profile.bio || '' %></textarea>
+          <% if (errors.bio) { %><p class="error-text"><%= errors.bio %></p><% } %>
+        </div>
+
+        <details class="mt-1">
+          <summary style="cursor:pointer;font-weight:700;color:var(--brand);">सोशल मीडिया दुवे</summary>
+          <div class="mt-2">
+            <div class="form-row">
+              <div class="field">
+                <label for="profile-facebook">Facebook</label>
+                <input class="input" id="profile-facebook" type="url" name="facebook" value="<%= social.facebook || '' %>" maxlength="300" placeholder="https://facebook.com/...">
+              </div>
+              <div class="field">
+                <label for="profile-youtube">YouTube</label>
+                <input class="input" id="profile-youtube" type="url" name="youtube" value="<%= social.youtube || '' %>" maxlength="300" placeholder="https://youtube.com/...">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="profile-instagram">Instagram</label>
+                <input class="input" id="profile-instagram" type="url" name="instagram" value="<%= social.instagram || '' %>" maxlength="300">
+              </div>
+              <div class="field">
+                <label for="profile-x">X (Twitter)</label>
+                <input class="input" id="profile-x" type="url" name="x" value="<%= social.x || '' %>" maxlength="300">
+              </div>
+            </div>
+            <div class="field">
+              <label for="profile-whatsapp">WhatsApp</label>
+              <input class="input" id="profile-whatsapp" type="text" name="whatsapp" value="<%= social.whatsapp || '' %>" maxlength="40">
+            </div>
+          </div>
+        </details>
+
+        <button class="btn btn-primary" type="submit">माहिती जतन करा</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h2>पासवर्ड बदला</h2></div>
+    <div class="panel-body">
+      <form action="/dashboard/password" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="field">
+          <label for="password-current">सध्याचा पासवर्ड</label>
+          <input class="input" id="password-current" type="password" name="current_password" required autocomplete="current-password">
+          <% if (passwordErrors.current_password) { %><p class="error-text"><%= passwordErrors.current_password %></p><% } %>
+        </div>
+
+        <div class="field">
+          <label for="password-new">नवीन पासवर्ड</label>
+          <input class="input" id="password-new" type="password" name="password" required minlength="8" autocomplete="new-password">
+          <% if (passwordErrors.password) { %><p class="error-text"><%= passwordErrors.password %></p><% } %>
+          <p class="hint">किमान ८ अक्षरे, अक्षर आणि अंक आवश्यक.</p>
+        </div>
+
+        <div class="field">
+          <label for="password-confirm">नवीन पासवर्ड पुन्हा</label>
+          <input class="input" id="password-confirm" type="password" name="confirm" required minlength="8" autocomplete="new-password">
+          <% if (passwordErrors.confirm) { %><p class="error-text"><%= passwordErrors.confirm %></p><% } %>
+        </div>
+
+        <button class="btn btn-primary" type="submit">पासवर्ड बदला</button>
+      </form>
+
+      <hr>
+      <p class="small muted">
+        खाते नोंदणी दिनांक: <%= helpers.formatDateMr(profile.created_at) %><br>
+        ईमेल पुष्टी: <%= Number(profile.email_verified) === 1 ? 'पुष्टी झाली' : 'प्रलंबित' %>
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

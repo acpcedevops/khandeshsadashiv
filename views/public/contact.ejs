@@ -1,0 +1,73 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">संपर्क</span>
+    <h1>आमच्याशी संपर्क साधा</h1>
+    <p class="muted" style="max-width:65ch;">लेख, कार्यक्रम, पुस्तके किंवा सहकार्यासंबंधी संदेश पाठवा. कृपया उत्तरासाठी वैध ईमेल द्या.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="grid grid-2" style="align-items:start;">
+      <form action="/contact" method="post" class="form-card">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <h2 style="font-size:1.3rem;">संदेश पाठवा</h2>
+
+        <% if (errors.form) { %><div class="alert alert-error"><span><%= errors.form %></span></div><% } %>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="contact-name">नाव *</label>
+            <input class="input" id="contact-name" type="text" name="name" value="<%= form.name || '' %>" required maxlength="80" autocomplete="name">
+            <% if (errors.name) { %><p class="error-text"><%= errors.name %></p><% } %>
+          </div>
+          <div class="field">
+            <label for="contact-email">ईमेल *</label>
+            <input class="input" id="contact-email" type="email" name="email" value="<%= form.email || '' %>" required maxlength="120" autocomplete="email">
+            <% if (errors.email) { %><p class="error-text"><%= errors.email %></p><% } %>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="contact-subject">विषय</label>
+          <input class="input" id="contact-subject" type="text" name="subject" value="<%= form.subject || '' %>" maxlength="120">
+        </div>
+
+        <div class="field">
+          <label for="contact-message">संदेश *</label>
+          <textarea class="textarea" id="contact-message" name="message" required maxlength="4000"><%= form.message || '' %></textarea>
+          <% if (errors.message) { %><p class="error-text"><%= errors.message %></p><% } %>
+        </div>
+
+        <button class="btn btn-primary" type="submit">संदेश पाठवा</button>
+        <p class="hint mt-1">हे फॉर्म पाठवल्यावर संदेश प्रशासकाकडे जातो. स्पॅम टाळण्यासाठी मर्यादित विनंत्या स्वीकारल्या जातात.</p>
+      </form>
+
+      <div class="panel">
+        <div class="panel-head"><h2>संपर्क माहिती</h2></div>
+        <div class="panel-body">
+          <p><strong>पत्ता</strong><br><%= settings['site.address'] %></p>
+          <p><strong>ईमेल</strong><br><a href="mailto:<%= settings['site.contact_email'] %>"><%= settings['site.contact_email'] %></a></p>
+          <p><strong>दूरध्वनी</strong><br><a href="tel:<%= settings['site.contact_phone'].replace(/\s+/g, '') %>"><%= settings['site.contact_phone'] %></a></p>
+          <hr>
+          <p><strong>सोशल मीडिया</strong></p>
+          <div class="flex gap-1" style="flex-wrap:wrap;">
+            <% if (settings['site.facebook']) { %><a class="chip" href="<%= settings['site.facebook'] %>" target="_blank" rel="noopener">Facebook</a><% } %>
+            <% if (settings['site.youtube']) { %><a class="chip" href="<%= settings['site.youtube'] %>" target="_blank" rel="noopener">YouTube</a><% } %>
+            <% if (settings['site.instagram']) { %><a class="chip" href="<%= settings['site.instagram'] %>" target="_blank" rel="noopener">Instagram</a><% } %>
+            <% if (settings['site.x']) { %><a class="chip" href="<%= settings['site.x'] %>" target="_blank" rel="noopener">X</a><% } %>
+          </div>
+          <hr>
+          <p class="small muted">
+            लेखकाला लेखन सादर करायचे असल्यास <a href="/register">लेखक म्हणून नोंदणी करा</a>.
+            नोंदणी डॉ. सुर्यवंशी यांच्या मंजुरीनंतर सक्रिय होते.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/public-footer') %>

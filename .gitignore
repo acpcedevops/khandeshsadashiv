@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Local SQLite database and WAL files
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Uploaded files (served locally in development)
+public/uploads/
+
+# Environment secrets
+.env
+.env.local
+.env.*.local
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Test / coverage output
+coverage/
+.nyc_output/

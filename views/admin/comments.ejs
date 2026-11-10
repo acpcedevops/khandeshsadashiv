@@ -1,0 +1,62 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="flex gap-1 mb-2" style="flex-wrap:wrap;">
+  <a class="chip <%= status === 'pending' ? 'active' : '' %>" href="/admin/comments?status=pending">प्रलंबित</a>
+  <a class="chip <%= status === 'approved' ? 'active' : '' %>" href="/admin/comments?status=approved">मंजूर</a>
+  <a class="chip <%= status === 'rejected' ? 'active' : '' %>" href="/admin/comments?status=rejected">नाकारलेल्या</a>
+</div>
+
+<div class="panel">
+  <% if (comments.length) { %>
+    <div class="panel-body">
+      <div class="grid" style="gap:0.9rem;">
+        <% comments.forEach(function (comment) { %>
+          <div style="padding:0.85rem 0.95rem;border:1px solid var(--line);border-radius:10px;background:<%= status === 'pending' ? 'var(--surface-2)' : '#fff' %>;">
+            <div class="meta mb-1">
+              <strong><%= comment.author_name %></strong>
+              <% if (comment.author_email) { %><span class="small muted"><%= comment.author_email %></span><% } %>
+              <span class="dot"></span>
+              <span><%= helpers.formatDateMr(comment.created_at) %></span>
+            </div>
+            <div class="small muted mb-1">
+              लेख:
+              <a href="<%= comment.post_type === 'news' ? '/news/' : '/writings/' %><%= comment.post_slug %>" target="_blank" rel="noopener"><%= comment.post_title %></a>
+            </div>
+            <p style="margin:0 0 0.6rem;white-space:pre-wrap;"><%= comment.body %></p>
+            <div class="actions">
+              <% if (comment.status !== 'approved') { %>
+                <form action="/admin/comments/<%= comment.id %>/approve" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="back" value="/admin/comments?status=<%= status %>">
+                  <button class="btn btn-primary btn-sm" type="submit">मंजूर</button>
+                </form>
+              <% } %>
+              <% if (comment.status !== 'rejected') { %>
+                <form action="/admin/comments/<%= comment.id %>/reject" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="back" value="/admin/comments?status=<%= status %>">
+                  <button class="btn btn-ghost btn-sm" type="submit">नाकारा</button>
+                </form>
+              <% } %>
+              <form action="/admin/comments/<%= comment.id %>/delete" method="post" class="inline-form" data-confirm="ही टिप्पणी कायमची हटवायची आहे का?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="back" value="/admin/comments?status=<%= status %>">
+                <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">💬</div>
+      <h3>या स्थितीत टिप्पण्या नाहीत</h3>
+      <p>नवीन टिप्पण्या येथे मंजुरीसाठी दिसतील.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

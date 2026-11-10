@@ -1,0 +1,20 @@
+<% if (settings['features.newsletter'] === '1') { %>
+<section class="section">
+  <div class="container">
+    <div class="news-band" style="display:grid;grid-template-columns:1.3fr 1fr;gap:1.5rem;align-items:center;">
+      <div>
+        <span class="eyebrow" style="color:var(--accent)">वृत्तपत्र</span>
+        <h2 style="color:#fff;margin:0.3rem 0;">नवीन लेख थेट तुमच्या ईमेलवर</h2>
+        <p style="color:#e8d7b6;margin:0;">मराठी, अहिराणी आणि गझल साहित्याची नवीन पोस्ट आठवड्यातून एकदा.</p>
+      </div>
+      <form action="/newsletter" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="redirect" value="/">
+        <label class="sr-only" for="home-newsletter">ईमेल</label>
+        <input class="input" id="home-newsletter" type="email" name="email" placeholder="तुमचा ईमेल पत्ता" required>
+        <button class="btn btn-gold btn-block mt-1" type="submit">नोंदणी करा</button>
+      </form>
+    </div>
+  </div>
+</section>
+<% } %>

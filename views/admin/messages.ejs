@@ -1,0 +1,57 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="panel">
+  <div class="panel-head">
+    <h2>संपर्क संदेश</h2>
+    <span class="small muted"><%= helpers.toMarathiDigits(pagination.total) %> एकूण</span>
+  </div>
+  <% if (messages.length) { %>
+    <div class="panel-body">
+      <div class="grid" style="gap:0.9rem;">
+        <% messages.forEach(function (message) { %>
+          <div style="padding:0.9rem 1rem;border:1px solid var(--line);border-radius:10px;background:<%= Number(message.is_read) === 1 ? '#fff' : 'var(--surface-2)' %>;">
+            <div class="flex justify-between items-center gap-1 mb-1" style="flex-wrap:wrap;">
+              <div>
+                <strong><%= message.name %></strong>
+                <span class="small muted">&lt;<a href="mailto:<%= message.email %>"><%= message.email %></a>&gt;</span>
+              </div>
+              <div class="meta">
+                <span><%= helpers.formatDateTimeMr(message.created_at) %></span>
+                <% if (Number(message.is_read) === 1) { %>
+                  <span class="badge">वाचला</span>
+                <% } else { %>
+                  <span class="badge badge-news">नवीन</span>
+                <% } %>
+              </div>
+            </div>
+            <% if (message.subject) { %><div class="small mb-1"><strong>विषय:</strong> <%= message.subject %></div><% } %>
+            <p style="margin:0 0 0.6rem;white-space:pre-wrap;"><%= message.message %></p>
+            <div class="actions">
+              <% if (Number(message.is_read) !== 1) { %>
+                <form action="/admin/messages/<%= message.id %>/read" method="post" class="inline-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-ghost btn-sm" type="submit">वाचले म्हणून चिन्हांकित करा</button>
+                </form>
+              <% } %>
+              <a class="btn btn-ghost btn-sm" href="mailto:<%= message.email %>?subject=<%= encodeURIComponent('उत्तर: ' + (message.subject || 'तुमचा संदेश')) %>">उत्तर द्या</a>
+              <form action="/admin/messages/<%= message.id %>/delete" method="post" class="inline-form" data-confirm="हा संदेश हटवायचा आहे का?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">✉️</div>
+      <h3>अजून संदेश नाहीत</h3>
+      <p>संपर्क फॉर्मद्वारे आलेले संदेश येथे दिसतील.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

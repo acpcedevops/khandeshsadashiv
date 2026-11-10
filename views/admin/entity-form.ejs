@@ -1,0 +1,48 @@
+<%- include('../partials/shell-header', { areaName: 'admin' }) %>
+
+<div class="mb-2">
+  <a class="btn btn-ghost btn-sm" href="<%= cancelUrl %>">← मागे</a>
+</div>
+
+<div class="panel">
+  <div class="panel-body">
+    <form action="<%= action %>" method="post" enctype="<%= typeof enctype !== 'undefined' && enctype ? enctype : 'application/x-www-form-urlencoded' %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <% fields.forEach(function (field) { %>
+        <div class="field">
+          <label for="field-<%= field.name %>"><%= field.label %><%= field.required ? ' *' : '' %></label>
+
+          <% if (field.type === 'textarea') { %>
+            <textarea class="textarea" id="field-<%= field.name %>" name="<%= field.name %>" <%= field.required ? 'required' : '' %>><%= field.value || '' %></textarea>
+          <% } else if (field.type === 'select') { %>
+            <select class="select" id="field-<%= field.name %>" name="<%= field.name %>">
+              <% (field.options || []).forEach(function (option) { %>
+                <option value="<%= option.value %>" <%= String(field.value) === String(option.value) ? 'selected' : '' %>><%= option.label %></option>
+              <% }) %>
+            </select>
+          <% } else if (field.type === 'file') { %>
+            <input class="input" id="field-<%= field.name %>" type="file" name="<%= field.name %>" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+            <p class="hint">JPG, PNG, WEBP, GIF, AVIF · कमाल <%= uploadLimitMb %> MB</p>
+            <% if (typeof currentImage !== 'undefined' && currentImage) { %>
+              <div class="mt-1">
+                <img src="<%= currentImage %>" alt="सध्याचे चित्र" style="max-height:120px;border-radius:9px;border:1px solid var(--line);">
+              </div>
+            <% } %>
+          <% } else { %>
+            <input class="input" id="field-<%= field.name %>" type="<%= field.type || 'text' %>" name="<%= field.name %>" value="<%= field.value || '' %>" <%= field.required ? 'required' : '' %>>
+          <% } %>
+
+          <% if (field.hint) { %><p class="hint"><%= field.hint %></p><% } %>
+        </div>
+      <% }) %>
+
+      <div class="flex gap-1" style="flex-wrap:wrap;">
+        <button class="btn btn-primary" type="submit">जतन करा</button>
+        <a class="btn btn-ghost" href="<%= cancelUrl %>">रद्द करा</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/shell-footer') %>

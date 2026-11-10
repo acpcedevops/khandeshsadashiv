@@ -1,0 +1,81 @@
+<%- include('../partials/shell-header', { areaName: 'dashboard' }) %>
+
+<div class="flex justify-between items-center gap-2 mb-2" style="flex-wrap:wrap;">
+  <div class="flex gap-1" style="flex-wrap:wrap;">
+    <a class="chip <%= !status ? 'active' : '' %>" href="/dashboard/posts">सर्व</a>
+    <a class="chip <%= status === 'draft' ? 'active' : '' %>" href="/dashboard/posts?status=draft">मसुदे</a>
+    <a class="chip <%= status === 'pending_review' ? 'active' : '' %>" href="/dashboard/posts?status=pending_review">मंजुरी प्रतीक्षेत</a>
+    <a class="chip <%= status === 'changes_requested' ? 'active' : '' %>" href="/dashboard/posts?status=changes_requested">बदल आवश्यक</a>
+    <a class="chip <%= status === 'published' ? 'active' : '' %>" href="/dashboard/posts?status=published">प्रकाशित</a>
+    <a class="chip <%= status === 'rejected' ? 'active' : '' %>" href="/dashboard/posts?status=rejected">नामंजूर</a>
+  </div>
+  <% if (canWrite) { %>
+    <a class="btn btn-primary" href="/dashboard/posts/new">+ नवीन लेख</a>
+  <% } else { %>
+    <span class="badge">खाते मंजुरी प्रतीक्षेत</span>
+  <% } %>
+</div>
+
+<div class="panel">
+  <% if (posts.length) { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>शीर्षक</th>
+            <th>प्रकार</th>
+            <th>स्थिती</th>
+            <th>वाचन</th>
+            <th>अद्ययावत</th>
+            <th>क्रिया</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% posts.forEach(function (post) { %>
+            <tr>
+              <td>
+                <a href="/dashboard/posts/<%= post.id %>/edit"><%= helpers.truncate(post.title, 55) %></a>
+                <% if (post.rejection_reason && post.status === 'changes_requested') { %>
+                  <div class="small" style="color:var(--info);">टिप्पणी: <%= helpers.truncate(post.rejection_reason, 80) %></div>
+                <% } %>
+              </td>
+              <td><span class="badge <%= helpers.typeBadgeClass(post.type) %>"><%= helpers.postTypeLabel(post.type) %></span></td>
+              <td><%- include('../partials/status-badge', { status: post.status }) %></td>
+              <td><%= helpers.toMarathiDigits(post.view_count) %></td>
+              <td class="small muted"><%= helpers.formatDateMr(post.updated_at) %></td>
+              <td>
+                <div class="actions">
+                  <a class="btn btn-ghost btn-sm" href="/dashboard/posts/<%= post.id %>/edit">संपादन</a>
+                  <% if (post.status === 'published') { %>
+                    <a class="btn btn-ghost btn-sm" href="<%= post.type === 'news' ? '/news/' : '/writings/' %><%= post.slug %>" target="_blank" rel="noopener">पहा</a>
+                  <% } %>
+                  <% if (post.status === 'draft' || post.status === 'changes_requested') { %>
+                    <form action="/dashboard/posts/<%= post.id %>/submit" method="post" class="inline-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-gold btn-sm" type="submit">सादर करा</button>
+                    </form>
+                  <% } %>
+                  <form action="/dashboard/posts/<%= post.id %>/delete" method="post" class="inline-form" data-confirm="हा लेख कायमचा हटवायचा आहे का?">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-danger btn-sm" type="submit">हटवा</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <div class="empty-icon">📝</div>
+      <h3>या स्थितीत लेख नाही</h3>
+      <p>नवीन लेख तयार करा किंवा दुसरा फिल्टर निवडा.</p>
+      <a class="btn btn-primary" href="/dashboard/posts/new">नवीन लेख</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/pagination') %>
+
+<%- include('../partials/shell-footer') %>

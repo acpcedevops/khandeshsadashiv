@@ -1,0 +1,53 @@
+<%- include('../partials/public-header') %>
+
+<section class="section-tight">
+  <div class="container">
+    <span class="eyebrow">कार्यक्रम</span>
+    <h1>साहित्यिक उपक्रम</h1>
+    <p class="muted" style="max-width:65ch;">आगामी संमेलने, कवीसंमेलने, गझल मुशायरे आणि साहित्यिक कार्यक्रम.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head"><h2>आगामी</h2></div>
+    <% if (upcoming.length) { %>
+      <div class="grid grid-3">
+        <% upcoming.forEach(function (event) { %>
+          <article class="card">
+            <% if (event.cover_url) { %><div class="card-cover"><img src="<%= event.cover_url %>" alt="<%= event.title %>" loading="lazy"></div><% } %>
+            <div class="card-body">
+              <span class="badge mb-1">📅 <%= helpers.formatDateMr(event.starts_at) %></span>
+              <h3><%= event.title %></h3>
+              <% if (event.venue) { %><p class="meta">📍 <%= event.venue %></p><% } %>
+              <% if (event.description_mr) { %><p class="card-excerpt"><%= event.description_mr %></p><% } %>
+              <% if (event.map_url) { %><a class="btn btn-ghost btn-sm" href="<%= event.map_url %>" target="_blank" rel="noopener">नकाशावर पहा</a><% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty"><div class="empty-icon">🗓️</div><h3>सध्या कोणतेही आगामी कार्यक्रम नाहीत</h3><p>नवीन कार्यक्रमांची माहिती लवकरच येईल.</p></div>
+    <% } %>
+  </div>
+</section>
+
+<% if (past && past.length) { %>
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head"><h2>झालेले कार्यक्रम</h2></div>
+    <div class="grid grid-2">
+      <% past.forEach(function (event) { %>
+        <article class="card"><div class="card-body">
+          <div class="meta mb-1"><span class="badge"><%= helpers.formatDateMr(event.starts_at) %></span><% if (event.status === 'cancelled') { %><span class="badge">रद्द</span><% } %></div>
+          <h3><%= event.title %></h3>
+          <% if (event.venue) { %><p class="meta">📍 <%= event.venue %></p><% } %>
+          <% if (event.description_mr) { %><p class="card-excerpt"><%= event.description_mr %></p><% } %>
+        </div></article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/public-footer') %>
