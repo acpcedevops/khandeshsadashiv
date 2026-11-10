@@ -12,6 +12,8 @@ public/uploads/
 
 # Environment secrets
 .env
+*.txt
+!requirements*.txt
 .env.local
 .env.*.local
 
@@ -27,3 +29,5 @@ Thumbs.db
 # Test / coverage output
 coverage/
 .nyc_output/
+
+.vercel

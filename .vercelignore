@@ -1,0 +1,16 @@
+# Never upload local data, secrets or build artefacts to Vercel
+data/
+public/uploads/
+.env
+.env.*
+!.env.example
+.vercel/
+node_modules/
+coverage/
+.nyc_output/
+test/
+.git/
+*.log
+Thumbs.db
+.DS_Store
+dada.jfif

@@ -263,6 +263,49 @@ turso db shell <db-name> ".dump" > backup.sql
 
 Also export newsletter subscribers as CSV from the admin panel.
 
+### 5.7 Deploy on Vercel (alternative to Render)
+
+Vercel runs the app as a single serverless function using its zero-config
+Express support. The root `index.js` is the entry point; `vercel.json` bundles
+the EJS views and `schema.sql` into that function.
+
+> **Vercel's filesystem is read-only and ephemeral.** A remote database
+> (Turso) is mandatory — the app returns a clear 500 error if
+> `TURSO_DATABASE_URL` is missing.
+
+1. Create the Turso database (§5.1) and copy the `libsql://` URL + token.
+2. Deploy:
+   ```powershell
+   npm i -g vercel
+   vercel login
+   vercel --prod
+   ```
+   Or import the GitHub repository at <https://vercel.com/new>.
+3. Add these environment variables in **Project → Settings → Environment
+   Variables** (Production and Preview):
+   - `NODE_ENV=production`
+   - `SITE_URL=https://your-project.vercel.app`
+   - `JWT_SECRET` — a long random value
+   - `TURSO_DATABASE_URL` — the `libsql://` URL (the app converts it to `https://`)
+   - `TURSO_AUTH_TOKEN`
+   - `SEED_OWNER_EMAIL` / `SEED_OWNER_PASSWORD` — your real owner login
+   - optional: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_BUCKET`,
+     `RESEND_API_KEY`, `EMAIL_FROM`, `OWNER_EMAIL`
+4. Redeploy so the variables take effect, then log in at `/login`.
+
+Notes specific to Vercel:
+
+- `express.static()` is ignored; files in `public/` are served by Vercel's CDN.
+  Because of that, **image uploads require Supabase** (§5.2) — files written to
+  `public/uploads` at runtime are not persisted or served.
+- The in-process scheduler does not run on serverless; scheduled publishing is
+  applied when a page is requested.
+- Request bodies are limited to ~4.5 MB, so keep `MAX_UPLOAD_MB` at 4 or lower.
+- Pre-seed the remote database from your machine (optional, faster first load):
+  ```powershell
+  $env:TURSO_DATABASE_URL="libsql://..."; $env:TURSO_AUTH_TOKEN="..."; node scripts/seed-remote.js
+  ```
+
 ---
 
 ## 6. Security checklist

@@ -1,22 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "views/**",
-          "public/**",
-          "src/db/schema.sql"
-        ]
-      }
+  "functions": {
+    "index.js": {
+      "includeFiles": "{views/**,src/db/schema.sql}",
+      "excludeFiles": "{data/**,public/uploads/**,test/**,scripts/**,*.md}",
+      "memory": 1024,
+      "maxDuration": 30
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.js"
-    }
-  ]
+  }
 }
