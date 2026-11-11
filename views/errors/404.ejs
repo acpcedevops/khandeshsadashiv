@@ -18,6 +18,9 @@
       <div class="flex gap-1" style="justify-content:center;flex-wrap:wrap;">
         <a class="btn btn-primary" href="/">मुख्यपृष्ठावर जा</a>
         <a class="btn btn-ghost" href="/writings">साहित्य पहा</a>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+          <a class="btn btn-ghost" href="<%= ['owner', 'admin', 'editor'].includes(currentUser.role) ? '/admin' : '/dashboard' %>">डॅशबोर्ड</a>
+        <% } %>
       </div>
     </div>
   </main>

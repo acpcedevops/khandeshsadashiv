@@ -85,6 +85,14 @@ app.use('/api', apiRoutes);
 
 /* ── 404 ──────────────────────────────────────────────────── */
 app.use((req, res) => {
+  // A logged-in user who mistypes an admin/dashboard URL should not hit a
+  // dead-end 404 (e.g. after a stale login redirect) — send them to the
+  // dashboard area instead.
+  if (req.user && (req.path === '/admin' || req.path.startsWith('/admin/') ||
+      req.path === '/dashboard' || req.path.startsWith('/dashboard/'))) {
+    return res.redirect(req.path.startsWith('/admin') ? '/admin' : '/dashboard');
+  }
+
   if (req.path.startsWith('/api') || req.accepts(['html', 'json']) === 'json') {
     return res.status(404).json({ ok: false, error: 'मार्ग सापडला नाही.' });
   }

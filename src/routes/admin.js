@@ -30,6 +30,10 @@ const router = express.Router();
 
 router.use(requireAdmin);
 
+// Shortcut for "admin profile" links/bookmarks: the profile form is shared
+// with the author dashboard, so send people there instead of a 404.
+router.get('/profile', (req, res) => res.redirect('/dashboard/profile'));
+
 const POST_STATUSES = ['draft', 'pending_review', 'approved', 'published', 'changes_requested', 'rejected', 'archived'];
 const ROLES = ['owner', 'admin', 'editor', 'contributor', 'reader'];
 const HOME_SECTIONS = ['hero', 'news', 'featured', 'latest', 'poem', 'timeline', 'books', 'events', 'newsletter'];
