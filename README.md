@@ -265,9 +265,17 @@ Also export newsletter subscribers as CSV from the admin panel.
 
 ### 5.7 Deploy on Vercel (alternative to Render)
 
-Vercel runs the app as a single serverless function using its zero-config
-Express support. The root `index.js` is the entry point; `vercel.json` bundles
-the EJS views and `schema.sql` into that function.
+Vercel runs the app as a single serverless function using its **Express**
+framework preset. The root `index.js` is the entry point: it waits for the
+database schema/seed to finish and then hands the request to the Express app in
+`src/index.js`. No extra `vercel.json` configuration is needed — Vercel's
+Express builder automatically bundles the EJS `views/` and `src/db/schema.sql`.
+
+> **Vercel's Node runtime loads the app with CommonJS `require()`.** Avoid
+> ESM-only dependencies (for example `marked` v5+ or `sanitize-html` 2.18+,
+> which pulls in an ESM-only `htmlparser2`); they fail at runtime with
+> `ERR_REQUIRE_ESM`. The project uses `markdown-it` and `sanitize-html@2.17.0`
+> for this reason.
 
 > **Vercel's filesystem is read-only and ephemeral.** A remote database
 > (Turso) is mandatory — the app returns a clear 500 error if
