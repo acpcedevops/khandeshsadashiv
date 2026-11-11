@@ -4,6 +4,7 @@ public/uploads/
 .env
 .env.*
 !.env.example
+*.txt
 .vercel/
 node_modules/
 coverage/

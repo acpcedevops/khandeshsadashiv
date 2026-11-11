@@ -1,7 +1,9 @@
-const { marked } = require('marked');
+const MarkdownIt = require('markdown-it');
 const sanitizeHtml = require('sanitize-html');
 
-marked.setOptions({ gfm: true, breaks: true });
+// markdown-it is used instead of marked because marked v5+ is ESM-only and
+// Vercel's Node.js runtime cannot `require()` ESM modules from CommonJS.
+const markdown = new MarkdownIt({ html: true, linkify: false, breaks: true });
 
 const ALLOWED_TAGS = sanitizeHtml.defaults.allowedTags.concat([
   'img', 'figure', 'figcaption', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -9,7 +11,7 @@ const ALLOWED_TAGS = sanitizeHtml.defaults.allowedTags.concat([
 ]);
 
 function renderMarkdown(md) {
-  const raw = marked.parse(String(md || ''));
+  const raw = markdown.render(String(md || ''));
   return sanitizeHtml(raw, {
     allowedTags: ALLOWED_TAGS,
     allowedAttributes: {

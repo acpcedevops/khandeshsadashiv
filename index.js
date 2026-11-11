@@ -3,13 +3,18 @@
 /**
  * Vercel entry point.
  *
- * Vercel detects an Express app exported from this file and turns it into a
- * single serverless function, forwarding every request path unchanged.
- * The wrapper below only makes sure the database schema/seed has finished
- * initialising before Express handles the request.
+ * Vercel detects this file because it requires `express`, and turns it into a
+ * single serverless function that forwards every request path unchanged.
+ *
+ * The exported handler only makes sure the database schema/seed has finished
+ * initialising before the real Express app handles the request. Exporting a
+ * plain `(req, res)` function (instead of mounting the app with `app.use()`)
+ * keeps the handler compatible with every Vercel Node.js runtime shape.
  */
 
-const express = require('express');
+// Required so Vercel's Express builder detects this file as the entrypoint.
+require('express');
+
 const { app } = require('./src/index');
 const { initDb } = require('./src/db');
 
@@ -25,24 +30,20 @@ function ensureReady() {
   return ready;
 }
 
-const server = express();
-server.disable('x-powered-by');
-server.set('trust proxy', 1);
-
-server.use(async (req, res, next) => {
+module.exports = async function handler(req, res) {
   try {
     await ensureReady();
-    next();
   } catch (error) {
     console.error('[vercel] database initialisation failed:', error);
-    res.status(500).type('text/plain; charset=utf-8').send(
+    res.statusCode = 500;
+    res.setHeader('content-type', 'text/plain; charset=utf-8');
+    res.end(
       'Database initialisation failed. Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN ' +
         'in the Vercel project environment variables.\n\n' +
         error.message
     );
+    return;
   }
-});
 
-server.use(app);
-
-module.exports = server;
+  return app(req, res);
+};

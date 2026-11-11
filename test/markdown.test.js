@@ -22,9 +22,11 @@ test('renderMarkdown preserves poem line breaks', () => {
 });
 
 test('renderMarkdown sanitizes scripts and unsafe URLs', () => {
-  const html = renderMarkdown('<script>alert(1)</script>\n\n[x](javascript:alert(1))');
+  const html = renderMarkdown(
+    '<script>alert(1)</script>\n\n[x](javascript:alert(1))\n\n<a href="javascript:alert(1)">y</a>'
+  );
   assert.doesNotMatch(html, /<script/i);
-  assert.doesNotMatch(html, /javascript:/i);
+  assert.doesNotMatch(html, /href="javascript:/i);
 });
 
 test('renderMarkdown adds rel to links and loading to images', () => {

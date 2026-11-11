@@ -1,12 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "functions": {
-    "index.js": {
-      "includeFiles": "{views/**,src/db/schema.sql}",
-      "excludeFiles": "{data/**,public/uploads/**,test/**,scripts/**,*.md}",
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  }
+  "version": 2
 }
